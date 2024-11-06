@@ -1,3 +1,6 @@
+@import url('https://fonts.cdnfonts.com/css/games');
+
+
 body{
     background-color: transparent;
     font-family: Arial, sans-serif;
@@ -39,7 +42,7 @@ body{
     height: 150px;
     margin-top: 250px;
     margin-left: 0px;
-    font-family: 'Jersey 15';
+    font-family: 'Games', sans-serif;
     font-size: 90px;
     font-weight: 400px;
     line-height: 128px;
@@ -47,7 +50,7 @@ body{
     color: white;
 }
 #signupform{
-    background-color: #1c0836;
+    background-color:rgb(47, 10, 68);;
     height: 100%;
     grid-column: 2;
 }
@@ -56,10 +59,11 @@ body{
     margin-top: 50px;
     width: 90%;
     height: 90%;
-    background-color: rgb(0, 0, 0);
+    background-color: rgb(21, 2, 32);
 }
 
 #subject{
+    
     width: 358px;
     height: 73px;
     color:#ffffff;
@@ -74,32 +78,95 @@ body{
     text-decoration-thickness: 6px;
     text-underline-offset: 15px;
 }
-h2{
-    color: #ffffff;
-    font-size: 20px;
-    font-family: Inter;
-    margin-left: 25%;
-    margin-top: 50px;
-}
-.form-group {
+
+.formule {
     margin-bottom: 15px;
     position: relative;
 }
 
-.form-group input {
+.input-container {
+    position: relative;
+    width: 60%;
+    margin-left: 150px; 
+}
+
+.formule input {
     width: 100%;
-    padding: 10px;
-    padding-right: 40px; /* Space for the icon */
+    height: 50px;
+    background-color: transparent;
+    padding: 10px 40px 10px 10px;
     box-sizing: border-box;
-}
-label{
+    border-radius: 20px;
     color: #ffffff;
+    font-size: 15px;
 }
-.form-group img.icon {
+
+.icon {
     position: absolute;
-    right: 10px;
+    right: 10px; 
     top: 50%;
     transform: translateY(-50%);
-    height: 24px; /* Adjust as needed */
-    width: 24px; /* Adjust as needed */
+    height: 24px; 
+    width: 24px; 
+}
+
+label {
+    color: #ffffff;
+    margin-left: 150px;
+    font-size: 20px;
+    font-family: 'Istok Web', sans-serif;
+    font-weight: bold;
+}
+#signupbtn{
+    width: 60%;
+    height: 50px;
+    background-color: #5B54FA;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    margin-left: 150px;
+    margin-top: 20px;
+    font-size: 20px;
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+    cursor: pointer;
+}
+#signupbtn.q{
+    width: 60%;
+    height: 50px;
+    background-color: #ffffff;
+    color: #8A929C;
+    border: none;
+    border-radius: 20px;
+    margin-left: 150px;
+    margin-top: 20px;
+    font-size: 20px;
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+    cursor: pointer;
+}
+h2{
+    color: #d4caca;
+    margin-left: 150px;
+    font-size: 16px;
+    margin-bottom: -10px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+p{
+    color: #d4caca;
+    text-align: center;
+    font-size: 16px;
+    margin-top: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+#login{
+    color: #ffffff;
+    font-weight: bold;
+    text-decoration: none;
+    border:none;
+    background-color: transparent;
+    margin-left: 5px;
+    font-size: 15px;
+    cursor: pointer;
 }

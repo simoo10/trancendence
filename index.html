@@ -17,18 +17,37 @@
             <section id="formule">
                 <h1 id="subject">Create Account</h1>
                 <form action="#signupdir" method="post">
-                <div class="formule">
-                    <label>Full Name</label>
-                    <input type="text" name="firstname" placeholder="First Name" required>
-                    <img src="images/FN.png" class="icon" alt="Full Name">
-                    <label>Email Address</label>             
-                    <input type="text" name="username" placeholder="Username" required>
-                    <label>Password</label> 
-                    <input type="password" name="password" placeholder="Password" required>
-                    <label>Re-enter Password</label> 
-                    <input type="password" name="password2" placeholder="Confirm Password" required>
-                    <input type="submit" value="Sign Up">
-                </div>
+                    <div class="formule">
+                        <label>Full Name</label><br><br>
+                        <div class="input-container">
+                            <input type="text" name="firstname" placeholder="First Name" required>
+                            <img src="images/FN.png" class="icon" alt="Full Name">
+                        </div>
+                        <br><br>
+                        <label>Email Address</label><br><br>
+                        <div class="input-container">
+                            <input type="text" name="firstname" placeholder="Email" required>
+                            <img src="images/email.png" class="icon" alt="Full Name">
+                        </div>
+                        <br><br>
+                        <label>Password</label><br><br>
+                        <div class="input-container">
+                            <input type="text" name="firstname" placeholder="Password" required>
+                            <img src="images/pass.png" class="icon" alt="Full Name">
+                        </div>
+                        <br><br>
+                        <label>Re-Enter Password</label><br><br>
+                        <div class="input-container">
+                            <input type="text" name="firstname" placeholder="Password" required>
+                            <img src="images/pass.png" class="icon" alt="Full Name">
+                        </div>
+                        
+                        <button type="submit" id="signupbtn">Sign Up</button>
+                        <h2>------------------------------------------- OR --------------------------------------------------</h2>
+                        <button type="submit" id="signupbtn" class="q">Sign Up with 42</button>
+                        <p>Already have account?<button type="submit" id="login">Sign In</button></p>
+                        
+                    </div>
                 </form>
             </section>
                 
