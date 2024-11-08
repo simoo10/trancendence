@@ -3,42 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Form with Icon</title>
+    <title>Horizontal Gray Gradient</title>
     <style>
-        .form-group {
-            margin-bottom: 15px;
-            position: relative;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            padding-right: 40px; /* Space for the icon */
-            box-sizing: border-box;
-        }
-
-        .form-group img.icon {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            height: 24px; /* Adjust as needed */
-            width: 24px; /* Adjust as needed */
+        .gradient-container {
+            width: 500px; /* Adjust width as needed */
+            height: 100px; /* Adjust height as needed */
+            background: linear-gradient(to right, #ffffff, #000000); /* Gradient from white to black */
+            border: 1px solid #000; /* Optional: Border for visual reference */
         }
     </style>
 </head>
 <body>
-    <form>
-        <div class="form-group">
-            <label for="login">Login</label>
-            <input type="text" id="login" name="login" placeholder="Enter your login">
-        </div>
-        <div class="form-group">
-            <label for="full-name">Full Name</label>
-            <input type="text" id="full-name" name="full-name" placeholder="Enter your full name">
-            <img src="images/FN.png" class="icon" alt="Full Name Icon">
-        </div>
-        <button type="submit">Submit</button>
-    </form>
+    <div class="gradient-container"></div>
 </body>
+
 </html>
