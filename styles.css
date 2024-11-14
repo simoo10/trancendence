@@ -1,23 +1,6 @@
 @import url('https://fonts.cdnfonts.com/css/games');
-/* @keyframes flipAndZoom {
-    0%, 20% {
-        transform: rotateY(0deg) scale(1);
-    }
-    40% {
-        transform: rotateY(360deg) scale(1);
-    }
-    60% {
-        transform: rotateY(360deg) scale(1);
-    }
-    80% {
-        transform: rotateY(360deg) scale(1.5);
-    }
-    100% {
-        transform: rotateY(360deg) scale(1);
-    }
-} */
 
-body{
+body {
     background-color: transparent;
     font-family: Arial, sans-serif;
     margin: 0;
@@ -26,7 +9,7 @@ body{
     height: 100%;
 }
 
-#signup{
+#signup {
     background-color: transparent;
     font-family: Arial, sans-serif;
     margin: 0;
@@ -35,17 +18,18 @@ body{
     grid-template-columns: 50% 50%;
 }
 
-#presentation{
+#presentation {
     background: linear-gradient(116.82deg, #F338F7 0%, #5B54FA 52.5%);
     width: 50vw;
     height: 100vh;
     padding: 0;
     margin: 0;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     grid-column: 1;
 }
-#logo{
+
+#logo {
     width: 242px;
     height: 84px;
     margin-top: 20px;
@@ -53,7 +37,7 @@ body{
     background-color: transparent;
 }
 
-#h1signup{
+#h1signup {
     width: 950px;
     height: 150px;
     margin-top: 250px;
@@ -65,14 +49,15 @@ body{
     text-align: center;
     color: white;
     display: inline-block;
- 
 }
-#signupform{
-    background-color:rgb(47, 10, 68);
+
+#signupform {
+    background-color: rgb(47, 10, 68);
     height: 100%;
     grid-column: 2;
 }
-#formule{
+
+#formule {
     margin-left: 50px;
     margin-top: 50px;
     width: 90%;
@@ -80,11 +65,10 @@ body{
     background-color: rgb(21, 2, 32);
 }
 
-#subject{
-    
+#subject {
     width: 358px;
     height: 73px;
-    color:#ffffff;
+    color: #ffffff;
     font-size: 44px;
     font-style: bold;
     font-family: Inter;
@@ -92,7 +76,7 @@ body{
     margin-left: 25%;
     padding-top: 20px;
     text-decoration: underline;
-    text-decoration-color:#c312d381;
+    text-decoration-color: #c312d381;
     text-decoration-thickness: 6px;
     text-underline-offset: 15px;
 }
@@ -105,7 +89,7 @@ body{
 .input-container {
     position: relative;
     width: 60%;
-    margin-left: 150px; 
+    margin-left: 150px;
 }
 
 .formule input {
@@ -121,11 +105,11 @@ body{
 
 .icon {
     position: absolute;
-    right: 10px; 
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    height: 24px; 
-    width: 24px; 
+    height: 24px;
+    width: 24px;
 }
 
 label {
@@ -135,7 +119,8 @@ label {
     font-family: 'Istok Web', sans-serif;
     font-weight: bold;
 }
-#signupbtn{
+
+#signupbtn {
     width: 60%;
     height: 50px;
     background-color: #5B54FA;
@@ -149,10 +134,12 @@ label {
     font-weight: bold;
     cursor: pointer;
 }
-#signupbtn:hover{
+
+#signupbtn:hover {
     background-color: #fa54d6;
 }
-#q{
+
+#q {
     width: 60%;
     height: 50px;
     background-color: #ffffff;
@@ -166,10 +153,12 @@ label {
     font-weight: bold;
     cursor: pointer;
 }
-#q:hover{
+
+#q:hover {
     background-color: #653aca;
 }
-h2{
+
+h2 {
     color: #d4caca;
     margin-left: 150px;
     font-size: 16px;
@@ -177,44 +166,67 @@ h2{
     font-family: Arial, Helvetica, sans-serif;
 }
 
-p{
+p {
     color: #d4caca;
     text-align: center;
     font-size: 16px;
     margin-top: 10px;
     font-family: Arial, Helvetica, sans-serif;
 }
-#login{
+
+#login {
     color: #ffffff;
     font-weight: bold;
     text-decoration: none;
-    border:none;
+    border: none;
     background-color: transparent;
     margin-left: 5px;
     font-size: 15px;
     cursor: pointer;
 }
 
-#pong{
+#pong {
     width: 100%;
     height: 38.3%;
     margin-left: 0;
     margin-top: 0;
 }
-#darkmode-btn{
+
+#darkmode-btn {
     width: 2.5%;
     height: 2.5%;
-    cursor:pointer;
+    cursor: pointer;
     margin-left: 97%;
     background-color: transparent;
     background-image: url('images/darkmode.png');
     background-size: cover;
 }
 
-#darkmode-btn:hover{
+#darkmode-btn:hover {
     background-color: #fa54d6;
 }
 
-#input_color{
-    color:#ffffff;
+#input_color {
+    color: #ffffff;
+}
+
+.page-content {
+    display: none;
+}
+
+#signinform{
+    background-color: rgb(47, 10, 68);
+    height: 100%;
+    grid-column: 2;
+}
+
+#signupb{
+    color: #ffffff;
+    font-weight: bold;
+    text-decoration: none;
+    border: none;
+    background-color: transparent;
+    margin-left: 5px;
+    font-size: 15px;
+    cursor: pointer;
 }
