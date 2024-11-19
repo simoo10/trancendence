@@ -1,9 +1,10 @@
 
 
 function changemode(id) {
-    let background = document.getElementById(id);
-    let form_background = document.getElementById("formule");
-    let subject = document.getElementById("subject");
+    let backgrounda = document.getElementById(id);
+    let background = document.getElementsByClassName("signupform");
+    let form_background = document.getElementsByClassName("formule");
+    let subject = document.getElementsByClassName("subject");
     let signupbtn = document.getElementById("q");
     let darkmode = document.getElementById("darkmode-btn");
     let signin = document.getElementById("login");
@@ -12,7 +13,7 @@ function changemode(id) {
 
     const lightMode = {
         background: "#CCC2DC",
-        formBackground: "#ffffff",
+        formBackground: "rgb(255, 255, 255)",
         subject: "#374557",
         signupbtn_background: "#000000",
         signupbtn_color: "#ffffff",
@@ -33,15 +34,25 @@ function changemode(id) {
         input_color: "#ffffff",
     };
     const userData = {
-        background: window.getComputedStyle(background).backgroundColor,
-        formBackground: window.getComputedStyle(form_background).backgroundColor,
-        subject: window.getComputedStyle(subject).color,
+        background: window.getComputedStyle(backgrounda).backgroundColor,
+        // formBackground: window.getComputedStyle(form_background).backgroundColor,
+        // subject: window.getComputedStyle(subject).color,
     };
 
     if (userData.background === dakMode.background) {
-        background.style.backgroundColor = lightMode.background;
-        form_background.style.backgroundColor = lightMode.formBackground;
-        subject.style.color = lightMode.subject;
+        //console.log(form_background.style.backgroundColor);
+        //background.style.backgroundColor = lightMode.background;
+        for(let i = 0; i < background.length; i++){
+            background[i].style.backgroundColor = lightMode.background;
+        }
+        //form_background.style.backgroundColor = lightMode.formBackground;
+        for(let i = 0; i < form_background.length; i++){
+            form_background[i].style.backgroundColor = lightMode.formBackground;
+        }
+        //subject.style.color = lightMode.subject;
+        for(let i = 0; i < subject.length; i++){
+            subject[i].style.color = lightMode.subject;
+        }
         signupbtn.style.backgroundColor = lightMode.signupbtn_background;
         signupbtn.style.color = lightMode.signupbtn_color;
         darkmode.style.backgroundImage = lightMode.darkmode_img;
@@ -50,9 +61,19 @@ function changemode(id) {
             input_color[i].style.color = lightMode.input_color;
         }
     } else {
-        background.style.backgroundColor = dakMode.background;
-        form_background.style.backgroundColor = dakMode.formBackground;
-        subject.style.color = dakMode.subject;
+        // console.log(form_background.style.backgroundColor);
+        //background.style.backgroundColor = dakMode.background;
+        for(let i = 0; i < background.length; i++){
+            background[i].style.backgroundColor = dakMode.background;
+        }
+        //form_background.style.backgroundColor = dakMode.formBackground;
+        for(let i = 0; i < form_background.length; i++){
+            form_background[i].style.backgroundColor = dakMode.formBackground;
+        }
+        //subject.style.color = dakMode.subject;
+        for(let i = 0; i < subject.length; i++){
+            subject[i].style.color = dakMode.subject;
+        }
         signupbtn.style.backgroundColor = dakMode.signupbtn_background;
         signupbtn.style.color = dakMode.signupbtn_color;
         darkmode.style.backgroundImage = dakMode.darkmode_img;
@@ -75,8 +96,8 @@ document.getElementById("login").addEventListener("click",redirect);
 document.getElementById("signupb").addEventListener("click",redirect1);
 function redirect()
 {
-    let signup = document.getElementById("signupform");
-    let signin = document.getElementById("signinform");
+    let signup = document.getElementById("signupa");
+    let signin = document.getElementById("signin");
 
     signup.style.display = 'none';
     signin.style.display = 'block';
@@ -84,8 +105,8 @@ function redirect()
 
 function redirect1()
 {
-    let signup = document.getElementById("signupform");
-    let signin = document.getElementById("signinform");
+    let signup = document.getElementById("signupa");
+    let signin = document.getElementById("signin");
 
     signup.style.display = 'block';
     signin.style.display = 'none';
