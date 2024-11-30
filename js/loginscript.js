@@ -116,16 +116,16 @@ function loadPage(page) {
     fetch(page)
         .then(response => response.text())
         .then(data => {
-            document.getElementById('app').innerHTML = data;
+            document.getElementById('landingpage').innerHTML = data;
             window.history.pushState({}, "", page);
         });
 }
 
 window.onpopstate = function() {
-    loadPage(window.location.pathname.substring(1) || 'landingPage.html');
+    loadPage(window.location.pathname.substring(1) || 'index.html');
 };
 
-document.addEventListener("DOMContentLoaded", function() {
-    const initialPage = window.location.pathname.substring(1) || 'landingPage.html';
-    loadPage(initialPage);
-});
+// document.addEventListener("DOMContentLoaded", function() {
+//     const initialPage = window.location.pathname.substring(1) || 'landingPage.html';
+//     loadPage(initialPage);
+// });

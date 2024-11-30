@@ -9,22 +9,28 @@
 </head>
 <body>
     <!--Sign Up page-->
-    <div id="app">
     <div id="signup">
         <div id="presentation">
-           <img src="images/logo1.png" alt="logo" id="logo">
+
+           <a onclick="loadPage('index.html')"><img src="images/logo1.png" alt="logo" id="logo"></a>
             <h1 id="h1signup">WELCOME TO THE PONG GAME</h1>
             <img src="images/ping.png" alt="pong" id="pong">
     </div>
-        <div id="signin" class="signupform">
+    <div id="signupa" class="signupform" >
             <section class="formule">
-                <h1 class="subject">Log in</h1>
+                <h1 class="subject">Create Account</h1>
                 <form action="#" method="post">
                     <div class="formulee">
-                        <label>UserName Or Email Address</label><br><br>
+                        <label>Full Name</label><br><br>
                         <div class="input-container">
-                            <input class="input_color" type="text" name="firstname" placeholder="UserName Or Emai">
+                            <input class="input_color" type="text" name="firstname" placeholder="First Name">
                             <img src="images/FN.png" class="icon" alt="Full Name">
+                        </div>
+                        <br><br>
+                        <label>Email Address</label><br><br>
+                        <div class="input-container">
+                            <input class="input_color" type="text" name="firstname" placeholder="Email">
+                            <img src="images/email.png" class="icon" alt="Full Name">
                         </div>
                         <br><br>
                         <label>Password</label><br><br>
@@ -32,17 +38,22 @@
                             <input class="input_color" type="text" name="firstname" placeholder="Password">
                             <img src="images/pass.png" class="icon" alt="Full Name">
                         </div>
-                        <button type="submit" id="signupbtn" >Sign In</button>
+                        <br><br>
+                        <label>Re-Enter Password</label><br><br>
+                        <div class="input-container">
+                            <input class="input_color" type="text" name="firstname" placeholder="Password">
+                            <img src="images/pass.png" class="icon" alt="Full Name">
+                        </div>
+                        
+                        <button type="submit" id="signupbtn" >Sign Up</button>
                         <h2>------------------------------------------- OR --------------------------------------------------</h2>
-                        <button type="submit" id="q">Sign In with 42</button>
+                        <button type="submit" id="q">Sign Up with 42</button>
                         
                     </div>
-                </form>
-                <p>Already have account?<button id="signupb" onclick="loadPage('signup.html')">Sign Up</button></p>
+                </form><p>Already have account?<button id="login" onclick="loadPage('login.html')">Log In</button></p>
             </section>
-            <button id="darkmode-btn" onclick="changemode('signin')"></button>
+            <button id="darkmode-btn" onclick="changemode('signupa')"></button>
         </div>
-    </div>
     </div>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="js/loginscript.js"></script>
