@@ -92,8 +92,8 @@ function changemode(id) {
     }
 }
 
-document.getElementById("login").addEventListener("click",redirect);
-document.getElementById("signupb").addEventListener("click",redirect1);
+// document.getElementById("login").addEventListener("click",redirect);
+// document.getElementById("signupb").addEventListener("click",redirect1);
 function redirect()
 {
     let signup = document.getElementById("signupa");
@@ -111,3 +111,21 @@ function redirect1()
     signup.style.display = 'block';
     signin.style.display = 'none';
 }
+
+function loadPage(page) {
+    fetch(page)
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('app').innerHTML = data;
+            window.history.pushState({}, "", page);
+        });
+}
+
+window.onpopstate = function() {
+    loadPage(window.location.pathname.substring(1) || 'landingPage.html');
+};
+
+document.addEventListener("DOMContentLoaded", function() {
+    const initialPage = window.location.pathname.substring(1) || 'landingPage.html';
+    loadPage(initialPage);
+});

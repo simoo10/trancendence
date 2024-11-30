@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Madimi+One&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ADLaM+Display&display=swap">
 </head>
-<body>
+<body id="landingpage">
     <!--Landing page-->
     <div class="container">
     <nav class="navbar navbar-expand-lg fixed-top" style="background-color: rgb(251, 251, 251);">
@@ -25,10 +25,10 @@
             <div class="offcanvas-body">
               <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                 <li class="nav-item">
-                  <button class="nav-link active" aria-current="page" id="butt-style">Login</a>
+                  <button class="nav-link active" aria-current="page" id="butt-style" onclick="loadPage('index.html')">Login</a>
                 </li>
                 <li class="nav-item">
-                  <button class="nav-link" id="butt-style2">Signup</button>
+                  <button class="nav-link" id="butt-style2" onclick="loadPage('index.html')">Signup</button>
                 </li>
               </ul>
             </div>
@@ -44,5 +44,6 @@
     </div>
     <div id="bg"></div>
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+      <script src="js/loginscript.js"></script>
 </body>
 </html>

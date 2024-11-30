@@ -17,6 +17,9 @@ body{
     width: 90px;
     border : 2px solid rgb(173, 173, 173);
 }
+#butt-style:hover{
+    background-color: #b74dc9;
+}
 
 #butt-style2{
     margin-left: 5px;
@@ -26,6 +29,9 @@ body{
     height: 45px;
     border : 0;
     border-color: rgb(0, 0, 0);
+}
+#butt-style2:hover{
+    background-color: #b74dc9;
 }
 .container {
     padding: 0 15px; /* Add some padding to the container */
@@ -73,10 +79,10 @@ body{
 #bg{
     background: url('../images/bg.png') no-repeat right center;
     background-size: cover;
-    width: 1000px;
-    height: 1000px;
+    width: 800px;
+    height: 800px;
     position: fixed;
-    right: 150px;
+    right: 60px;
     top: 100px;
     z-index: -1;
 }

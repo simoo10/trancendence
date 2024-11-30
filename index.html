@@ -9,6 +9,7 @@
 </head>
 <body>
     <!--Sign Up page-->
+    <div id="app">
     <div id="signup">
         <div id="presentation">
            <img src="images/logo1.png" alt="logo" id="logo">
@@ -49,7 +50,7 @@
                         <button type="submit" id="q">Sign Up with 42</button>
                         
                     </div>
-                </form><p>Already have account?<button id="login">Log In</button></p>
+                </form><p>Already have account?<button id="login" onclick="redirect()">Log In</button></p>
             </section>
             <button id="darkmode-btn" onclick="changemode('signupa')"></button>
         </div>
@@ -75,10 +76,11 @@
                         
                     </div>
                 </form>
-                <p>Already have account?<button id="signupb">Sign Up</button></p>
+                <p>Already have account?<button id="signupb" onclick="redirect1()">Sign Up</button></p>
             </section>
             <button id="darkmode-btn" onclick="changemode('signin')"></button>
         </div>
+    </div>
     </div>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="js/loginscript.js"></script>
