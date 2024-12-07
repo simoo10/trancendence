@@ -1,0 +1,188 @@
+body{
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    height: auto; 
+}
+#body-st{
+    background-color: #1D1F2E;
+}
+#sidebarMenu{
+    background-color: #141622;
+    height: 100vh;
+}
+.navbar-custom{
+    margin-top: 15px;
+    background-color: #1D1F2E;
+    border-bottom: 2px solid #222455;
+}
+.navbar {
+    display: flex;
+    justify-content: center; /* This centers the items inside the navbar */
+    align-items: center; /* Ensures the items are vertically aligned */
+    background-color: transparent !important;
+}
+#logo{
+    width: 250px;
+    height: 90px;
+    margin-top: 30px;
+    display:inline-block;
+    border-bottom: 5px solid #79727a;
+    padding-bottom: 15px;
+}
+
+#menu{
+    margin-top: 20px;
+    margin-left: 60px;
+    font-size: 25px;
+    color: #5356FB;
+    font-family: 'Inter', sans-serif;
+}
+.icon{
+    width: 24px;
+    height: 24px;
+    margin-right: 5px;
+}
+
+.test{
+    font-size: 20px;
+    margin-left: 70px;
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    color:#A4B1CD;
+}
+li{
+    margin-top: 25px;
+}
+
+#settings{
+    margin-top: 500px;
+}
+#sett{
+    color: #5356FB;
+    font-size: 25px;
+    font-family: 'Inter', sans-serif;
+    margin-left: 60px;
+    margin-top: 20px;
+}
+#logout-btn{
+    background-color: #5356FB;
+    width:max-content;
+    border-radius: 50px;
+    margin-top: 30px;
+    margin-left: 70px;
+}
+#navbar-2{
+    background-color: #1D1F2E;
+}
+.search-place {
+    position: relative;
+    width: 400px;
+    
+}
+
+.search-place input {
+    padding-left: 30px; /* Add padding to make space for the icon */
+    background-color: #1D1F2E;
+    border-radius: 50px;
+    border-color: #F338F7;
+    height: 60px;
+    width: 500px;
+}
+.search-place input::placeholder {
+    color: #A4B1CD;
+    font-size: 18px;
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+}
+.search-place .search-icon {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none; /* Prevent the icon from blocking input */
+}
+
+.darkmode{
+    position: relative;
+    width: 200px;
+}
+.darkmode button {
+    margin-bottom: 15px;
+    width: 170px;
+    height: 50px;
+    padding-left: 30px; /* Add padding to make space for the icon */
+    background-color: #FFFFFF;
+    color:#364656;
+    border-radius: 20px;
+    border-color: #F338F7;
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+    
+}
+.darkmode .dkmode-icon {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    left: 20px;
+    top: 38%;
+    transform: translateY(-50%);
+    pointer-events: none; /* Prevent the icon from blocking input */
+}
+.notification-btn {
+    background: none;
+    border: none;
+    position: relative;
+}
+
+.notification-btn .icon-not {
+    width: 55px; /* Adjust icon size */
+    height: auto;
+    margin-top: -8px;
+    margin-right: 20px;
+}
+#dash-title{
+    
+    font-size: 45px;
+    font-family: 'Baloo Da', sans-serif;
+    color: #FFFFFF ;
+    margin-top: 20px;
+}
+
+.profile img{
+    width: 90px;
+    height: 90px;
+    margin-left: 50px;
+    margin-top: 20px;
+}
+.profile h2{
+    font-size: 45px;
+    font-family: 'Baloo Da', sans-serif;
+    color: #FFFFFF ;
+    margin-top: 20px;
+}
+.profile{
+    display: flex;
+    align-items:center;
+}
+.usr{
+    display: flex;
+    flex-direction: column;
+}
+
+.username{
+    font-size: 30px;
+    font-family: 'Inter', sans-serif;
+    color: #FFFFFF;
+    margin-left: 15px;
+    font-weight: bolder;
+}
+.rank{
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    color:#FFFFFF;
+    padding-left: 20px;
+}
