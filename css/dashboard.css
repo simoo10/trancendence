@@ -4,14 +4,18 @@ body{
     padding: 0;
     width: auto;
     height: auto; 
+    display:flex;
 }
+
 #body-st{
     background-color: #1D1F2E;
 }
 #sidebarMenu{
     background-color: #141622;
-    height: 100vh;
+    height: 100%;
+    overflow-y:auto;
 }
+
 .navbar-custom{
     margin-top: 15px;
     background-color: #1D1F2E;
@@ -23,15 +27,30 @@ body{
     align-items: center; /* Ensures the items are vertically aligned */
     background-color: transparent !important;
 }
+.logo-container {
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.logo-container::after {
+    content: '';
+    display: block;
+    width: 80%; 
+    height: 3px; 
+    background-color: rgb(98, 89, 89);
+    position: absolute; 
+    left: 8%;
+}
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 #logo{
     width: 250px;
     height: 90px;
-    margin-top: 30px;
-    display:inline-block;
-    border-bottom: 5px solid #79727a;
-    padding-bottom: 15px;
+    display: flex;
 }
-
 #menu{
     margin-top: 20px;
     margin-left: 60px;
@@ -185,4 +204,77 @@ li{
     font-family: 'Inter', sans-serif;
     color:#FFFFFF;
     padding-left: 20px;
+}
+
+.winning-rate{
+    border: 2px solid #FFFFFF;
+    width: max-content;
+
+}
+.winning-rate h3{
+    font-size: 20px;
+    font-family: 'Inter', sans-serif;
+    color: #FFFFFF;
+    padding: 10px;
+}
+.container{
+    display: flex;
+}
+.box{
+    flex: 1;
+    margin-right: 50px;
+    text-align: center;
+}
+.latest-match{
+    border: 2px solid #FFFFFF;
+    width: max-content;
+}
+.latest-match h3{
+    font-size: 20px;
+    font-family: 'Inter', sans-serif;
+    color: #FFFFFF;
+    padding: 10px;
+}
+.ranking{
+    border: 2px solid #FFFFFF;
+    width: max-content;
+}
+.ranking h3{
+    font-size: 20px;
+    font-family: 'Inter', sans-serif;
+    color: #FFFFFF;
+    padding: 10px;
+}
+
+
+.main-btn{
+    background-color: #868686;
+    border: none;
+    margin-top: 20px;
+    width: 300px;
+    height: 50px;
+}
+
+.dashtable{
+    margin-top: 50px;
+    text-align: center;
+}
+
+.custom-table th{
+    background-color: #141622;
+    color: #FFFFFF;
+    font-family: 'Inter', sans-serif;
+}
+
+.first-th th{
+    font-size: 26px;
+}
+
+.second-th th{
+    font-size: 16px;
+    background-color:#444040
+}
+
+.body-td td{
+    border: none;
 }

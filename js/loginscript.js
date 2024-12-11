@@ -94,29 +94,30 @@ function changemode(id) {
 
 // document.getElementById("login").addEventListener("click",redirect);
 // document.getElementById("signupb").addEventListener("click",redirect1);
-function redirect()
-{
-    let signup = document.getElementById("signupa");
-    let signin = document.getElementById("signin");
+// function redirect()
+// {
+//     let signup = document.getElementById("signupa");
+//     let signin = document.getElementById("signin");
 
-    signup.style.display = 'none';
-    signin.style.display = 'block';
-}
+//     signup.style.display = 'none';
+//     signin.style.display = 'block';
+// }
 
-function redirect1()
-{
-    let signup = document.getElementById("signupa");
-    let signin = document.getElementById("signin");
+// function redirect1()
+// {
+//     let signup = document.getElementById("signupa");
+//     let signin = document.getElementById("signin");
 
-    signup.style.display = 'block';
-    signin.style.display = 'none';
-}
+//     signup.style.display = 'block';
+//     signin.style.display = 'none';
+// }
 
 function loadPage(page) {
     fetch(page)
         .then(response => response.text())
         .then(data => {
-            document.getElementById('landingpage').innerHTML = data;
+            console.log(data);
+            document.getElementById('landingpage').innerHTML=data;
             window.history.pushState({}, "", page);
         });
 }
@@ -124,8 +125,3 @@ function loadPage(page) {
 window.onpopstate = function() {
     loadPage(window.location.pathname.substring(1) || 'index.html');
 };
-
-// document.addEventListener("DOMContentLoaded", function() {
-//     const initialPage = window.location.pathname.substring(1) || 'landingPage.html';
-//     loadPage(initialPage);
-// });
