@@ -5,15 +5,18 @@ body{
     width: auto;
     height: auto; 
     display:flex;
+    background-color: #1D1F2E;
 }
 
 #body-st{
     background-color: #1D1F2E;
+
 }
 #sidebarMenu{
     background-color: #141622;
     height: 100%;
     overflow-y:auto;
+    overflow-x: auto;
 }
 
 .navbar-custom{
@@ -124,7 +127,9 @@ li{
     transform: translateY(-50%);
     pointer-events: none; /* Prevent the icon from blocking input */
 }
-
+.side-ul{
+    margin-right: 100px;
+}
 .darkmode{
     position: relative;
     width: 200px;
@@ -224,9 +229,11 @@ li{
     flex: 1;
     margin-right: 50px;
     text-align: center;
+    border: 2px solid #FFFFFF;
+    border-radius: 10px;
 }
 .latest-match{
-    border: 2px solid #FFFFFF;
+    /* border: 2px solid #FFFFFF; */
     width: max-content;
 }
 .latest-match h3{
@@ -236,7 +243,7 @@ li{
     padding: 10px;
 }
 .ranking{
-    border: 2px solid #FFFFFF;
+    /* border: 2px solid #FFFFFF; */
     width: max-content;
 }
 .ranking h3{
@@ -250,9 +257,17 @@ li{
 .main-btn{
     background-color: #868686;
     border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    color: #FFFFFF;
     margin-top: 20px;
     width: 300px;
     height: 50px;
+}
+.main-btn:hover{
+    background-color: #5356FB;
 }
 
 .dashtable{
@@ -277,4 +292,33 @@ li{
 
 .body-td td{
     border: none;
+}
+
+.game-mode{
+    position: relative;
+    width: 200px;
+}
+.game-mode .mode-icon {
+    position: absolute;
+    width: 45px;
+    height: 45px;
+    left: 20px;
+    top: 45px;
+    transform: translateY(-50%);
+    pointer-events: none; /* Prevent the icon from blocking input */
+}
+
+
+
+@media (max-width: 1800px) {
+    .test{
+        margin-left: 10px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 700px) {
+    .test{
+        margin-left: 0px;
+    }
 }

@@ -20,28 +20,28 @@
                             </div>
                             <h3 id="menu">Menu</h3>
                             <li class="nav-item">
-                                <a class="test" class="nav-link"  aria-current="page" href="#" ><img src="images/dshboard.png" class="icon"> Dashboard</a>
+                                <a class="nav-link test"  aria-current="page" href="#" ><img src="images/dshboard.png" class="icon"> Dashboard</a>
                             </li>
                             <li class="nav-item">
-                                <a class="test" class="nav-link" href="#"><img src="images/leaderboard.png" class="icon">Leaderboard</a>
+                                <a class="nav-link test" href="#"><img src="images/leaderboard.png" class="icon">Leaderboard</a>
                             </li>
                             <li class="nav-item">
-                                <a class="test" class="nav-link" href="#"><img src="images/friends.png" class="icon">Friends</a>
+                                <a class="nav-link test" href="#"><img src="images/friends.png" class="icon">Friends</a>
                             </li>
                             <li class="nav-item">
-                                <a class="test" class="nav-link" href="#"><img src="images/chat.png" class="icon">Chat</a>
+                                <a class="nav-link test" href="#"><img src="images/chat.png" class="icon">Chat</a>
                             </li>
                             <li class="nav-item">
-                                <a class="test" class="nav-link" href="#"><img src="images/play.png" class="icon">Play</a>
+                                <a class="nav-link test" href="#"><img src="images/play.png" class="icon">Play</a>
                             </li>
                         </ul>
                         <ul class="nav flex-column" id="settings">
                             <h5 id="sett">Settings</h5>
                             <li class="nav-item">
-                                <a class="test" class="nav-link" href="#"><img src="images/profile.png" class="icon">Profile</a>
+                                <a class="nav-link test" href="#"><img src="images/profile.png" class="icon">Profile</a>
                             </li>
                             <li class="nav-item">
-                                <a class="test" class="nav-link" href="#"><img src="images/settings.png" class="icon">Settings</a>
+                                <a class="nav-link test" href="#"><img src="images/settings.png" class="icon">Settings</a>
                             </li>
                             <button type="button" class="btn btn-primary btn-lg" id="logout-btn"><img src="images/logout.png" class="icon">Log Out</button>
                         </ul>
@@ -57,7 +57,7 @@
                                 </div>
                             </form>
                             <div class="navbar-collapse collapse" id="navbarSupportedContent">
-                                <ul class="navbar-nav ms-auto" style="margin-right: 200px;">
+                                <ul class="navbar-nav ms-auto side-ul">
                                     <li class="nav-item">
                                         <div class="darkmode">
                                             <button class="btn btn-primary me-2" class="darkmode-btn">Darkmode</button>
@@ -88,25 +88,31 @@
                     <div class="container">
                         <div class="box winning-rate">
                             <h3>Winning Rate</h3>
-                            <!-- <div class="progress">
-                            </div> -->
                         </div>
                         <div class="box latest-match">
                             <h3>Latest Match</h3>
-                            <!-- <div class="progress">
-                            </div> -->
                         </div>
                         <div class="box ranking">
                             <h3>Your Rank</h3>
-                            <!-- <div class="progress">
-                            </div> -->
                         </div>
-                        <div class="btn-group-vertical col-md-1 col-lg-1">
-                            <button type="button" class="btn-primary main-btn">New Game</button>
+                            <div class="btn-group-vertical">
+                            <div class="game-mode">
+                                <button type="button" class="btn-primary main-btn">New Game</button>
+                                <img src="images/modegame.png" alt="mode" class="mode-icon">
+                            </div>
+                            <div class="game-mode">
                             <button type="button" class="btn-primary main-btn">Play IA</button>
+                            <img src="images/iagame.png" alt="mode" class="mode-icon">
+                            </div>
+                            <div class="game-mode">
                             <button type="button" class="btn-primary main-btn">PLay a Friend</button>
+                            <img src="images/friendgame.png" alt="mode" class="mode-icon">
+                            </div>
+                            <div class="game-mode">
                             <button type="button" class="btn-primary main-btn">Tournaments</button>
-                        </div>
+                            <img src="images/tourgame.png" alt="mode" class="mode-icon">
+                            </div>
+                            </div>
                     </div>
                     <div class="container">
                         <div class="col-md-10 col-lg-10 dashtable">
@@ -127,13 +133,12 @@
                                         <td>user 1</td>
                                         <td>w</td>
                                         <td>10</td>
-                                        <td>user 4</td>
+                                        <td rowspan="2">2024-12-07</td>
                                     </tr>
                                     <tr>
                                         <td>user 2</td>
                                         <td>l</td>
                                         <td>5</td>
-                                        <td>user 3</td>
                                     </tr>
                                 </tbody>
                             </table>
