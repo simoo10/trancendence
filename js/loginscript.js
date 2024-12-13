@@ -112,16 +112,28 @@ function changemode(id) {
 //     signin.style.display = 'none';
 // }
 
+
 function loadPage(page) {
     fetch(page)
         .then(response => response.text())
         .then(data => {
             console.log(data);
-            document.getElementById('landingpage').innerHTML=data;
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(data, 'text/html');
+
+            // Replace head content
+            document.head.innerHTML = doc.head.innerHTML;
+
+            // Replace body content
+            document.body.innerHTML = doc.body.innerHTML;
+
+            // Update the URL in the browser's history
             window.history.pushState({}, "", page);
+        })
+        .catch(error => {
+            console.error('Error fetching the page:', error);
         });
 }
-
 window.onpopstate = function() {
     loadPage(window.location.pathname.substring(1) || 'index.html');
 };

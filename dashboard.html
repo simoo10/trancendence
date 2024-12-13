@@ -9,7 +9,7 @@
         <link href="https://fonts.googleapis.com/css2?family=K2D:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Baloo+Da:wght@400;700&display=swap" rel="stylesheet">
     </head>
-    <body> 
+    <body id="dashboard" > 
         <div class="container-fluid" id="body-st">
             <div class="row" >
                 <nav class="col-md-3 col-lg-2 d-md-block bg collapse" style="height: 100vh;">
@@ -52,7 +52,7 @@
                         <div class="container-fluid">
                             <form class="d-flex">
                                 <div class="search-place">
-                                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="search-input">
                                     <img src="images/search.png" alt="search" class="search-icon">
                                 </div>
                             </form>
@@ -60,7 +60,7 @@
                                 <ul class="navbar-nav ms-auto side-ul">
                                     <li class="nav-item">
                                         <div class="darkmode">
-                                            <button class="btn btn-primary me-2" class="darkmode-btn">Darkmode</button>
+                                            <button class="btn btn-primary me-2" class="darkmode-btn" onclick="lightmode()">Darkmode</button>
                                             <img src="images/lightmode.png" alt="search" class="dkmode-icon">
                                         </div>
                                     </li>
@@ -152,6 +152,8 @@
 
 
         <script src="js/loginscript.js"></script>
+        <script src="js/animation.js"></script>
+        <script src="js/lightmode.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     </body>
 </html>

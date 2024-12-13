@@ -1,4 +1,4 @@
-body{
+#dashboard{
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
@@ -54,6 +54,10 @@ body{
     height: 90px;
     display: flex;
 }
+/* #logo:hover{
+    transform: rotate(360deg);
+
+} */
 #menu{
     margin-top: 20px;
     margin-left: 60px;
@@ -79,7 +83,7 @@ li{
 }
 
 #settings{
-    margin-top: 500px;
+    margin-top: 400px;
 }
 #sett{
     color: #5356FB;
@@ -104,13 +108,14 @@ li{
     
 }
 
-.search-place input {
+#search-input{
     padding-left: 30px; /* Add padding to make space for the icon */
     background-color: #1D1F2E;
     border-radius: 50px;
     border-color: #F338F7;
     height: 60px;
     width: 500px;
+    color: #ffffff;
 }
 .search-place input::placeholder {
     color: #A4B1CD;
@@ -214,7 +219,7 @@ li{
 .winning-rate{
     border: 2px solid #FFFFFF;
     width: max-content;
-
+    background-color: #171820;
 }
 .winning-rate h3{
     font-size: 20px;
@@ -235,6 +240,7 @@ li{
 .latest-match{
     /* border: 2px solid #FFFFFF; */
     width: max-content;
+    background-color: #171820;
 }
 .latest-match h3{
     font-size: 20px;
@@ -245,6 +251,7 @@ li{
 .ranking{
     /* border: 2px solid #FFFFFF; */
     width: max-content;
+    background-color: #171820;
 }
 .ranking h3{
     font-size: 20px;

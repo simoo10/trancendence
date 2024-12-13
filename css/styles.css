@@ -15,7 +15,6 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-
     width: auto;
     height: auto;
 }
@@ -241,3 +240,16 @@ p {
     font-size: 15px;
     cursor: pointer;
 }
+
+/* 
+@media (max-width: 1800px) {
+    #presentation {
+    overflow-x: auto;
+}
+}
+
+@media (max-width: 700px) {
+    .test{
+        margin-left: 0px;
+    }
+} */
