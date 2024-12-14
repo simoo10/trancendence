@@ -62,7 +62,7 @@ body{
     width: 92%;
     height: 92%;
     background: #11131F;
-    position: absolute;
+    position: relative;
     top: 4.5%;
     left: 4.5%;
 }
@@ -83,13 +83,49 @@ body{
 
 }
 .login-input{
-    padding-left: 150px;
-    padding-top: 40px;
+    padding-left: 25%;
+    padding-top: 2%;
     color: #ffffff;
+    font-family: 'Istok Web', sans-serif;
+    font-weight: bold;
+    font-size: 20px;
 }
 
 .form-control{
-    width: 500px;
+    width:25vw;
+    background-color: transparent;
+    border-radius: 28px;
+    height: 50px;
+}
+.form-control::placeholder{
+    color: #938F99;
+    font-size: 15px;
+}
+.input-container {
+    position: absolute;
+}
+
+
+.icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: #888;
+}
+.form-check{
+    padding-left: 270px;
+    padding-top: 20px;
+    color: #ffffff;
+    font-family: 'Istok Web', sans-serif;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.log-button{
+    margin-left: 25%;
+    width: 25vw;
 }
 
 /*--------------------------small to medium screen css*-----------------*/
