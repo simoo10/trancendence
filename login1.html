@@ -9,16 +9,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Istok+Web:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="css/login.css">
+    <link rel="stylesheet" type="text/css" href="css/signup.css">
 </head>
 <body id="loginpage">
     <div class="container-fluid">
         <div class="row">
             <!--hadi dyal welcome side-->
-            <div div class="col-md-6 column d-none d-lg-block left-side">
+            <div class="col-md-6 column d-none d-lg-block left-side">
                 <a onclick="loadPage('index.html')"><img src="images/logo1.png" alt="logo" class="img-fluid" id="logo"></a>
                 <h1 id="login-title">WELCOME TO THE PONG GAME</h1>
                 <img src="images/ping.png" alt="pong" class="img-fluid" id="pong">
+                <!-- <div class="pong-ball"></div> -->
             </div>
             <!--hadi dyal login side-->
             <div class="col-md-6 col-lg-6 column right-side">
@@ -26,16 +27,30 @@
                     <h1 id="subject">Log In</h1>
                     <form action="#" method="POST">
                         <div class="mb-3 login-input">
-                            <label for="username" class="form-label">Email Address Or UserName</label>
+                            <label for="username" class="form-label">Full Name</label>
                             <div class="input-container">
-                                <input type="text" class="form-control" id="username" placeholder="Enter your username" required>
+                                <input type="text" class="form-control" id="username" placeholder="Enter your full name" required>
+                                <i class="bi bi-person-fill icon"></i>
+                            </div>        
+                        </div><br>
+                        <div class="mb-3 login-input">
+                            <label for="username" class="form-label">Email Address</label>
+                            <div class="input-container">
+                                <input type="text" class="form-control" id="username" placeholder="Enter your email address" required>
                                 <i class="bi bi-envelope-fill icon"></i>
                             </div>        
                         </div><br>
                         <div class="mb-3 login-input">
-                            <label for="password" class="form-label">Password</label>
+                            <label for="username" class="form-label">Password</label>
                             <div class="input-container">
-                                <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                                <input type="text" class="form-control" id="username" placeholder="Enter your password" required>
+                                <i class="bi bi-lock-fill icon"></i>
+                            </div>        
+                        </div><br>
+                        <div class="mb-3 login-input">
+                            <label for="password" class="form-label">Confirm Password</label>
+                            <div class="input-container">
+                                <input type="password" class="form-control" id="password" placeholder="Confirm your password" required>
                                 <i class="bi bi-lock-fill icon"></i>
                             </div>
                         </div><br><br>
@@ -43,14 +58,23 @@
                             <input type="checkbox" class="form-check-input" id="rememberMe">
                             <label class="form-check-label" for="rememberMe">Remember Me</label>
                         </div><br><br>
-                        <button type="submit" class="btn btn-primary log-button">Log In</button>
+                        <button type="submit" class="btn btn-primary log-button" id="simple-log">Log In</button>
+                        <h2 id="or-line">------------------------------- OR ------------------------------</h2>
+                        <div class="button-container">
+                            <img src="images/42-icon.png" alt="42" class="img-fluid" id="icon42">
+                            <button type="submit" class="btn btn-primary log-button" id="log-42">Log In with 42</button>
+                        </div>
                     </form>
+                    <br>
+                    <p>Don't have an account? <a id="signup-link" onclick="loadPage('signup.html')">Sign Up</a></p>
                 </div>
+                <button id="mode-btn" onclick="changemode()"></button>
             </div>
         </div>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/loginscript.js"></script>
 </body>
 
 </html>
