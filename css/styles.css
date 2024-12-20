@@ -208,7 +208,7 @@ p {
     cursor: pointer;
     margin-left: 97%;
     background-color: transparent;
-    background-image: url('../images/darkmode.png');
+    background-image: url('/images/darkmode.png');
     background-size: cover;
 }
 
