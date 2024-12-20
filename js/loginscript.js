@@ -137,3 +137,8 @@ function loadPage(page) {
 window.onpopstate = function() {
     loadPage(window.location.pathname.substring(1) || 'index.html');
 };
+
+
+document.getElementById("log-42").addEventListener("click", function() {
+    loadPage('login.html');
+} );

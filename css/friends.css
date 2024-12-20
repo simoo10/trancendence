@@ -190,79 +190,70 @@ li {
     width: fit-content;
     display: flex;
 }
-#leaderboard-title{
+#friends-title{
     color: #FFFFFF;
     font-family: 'Baloo Da', sans-serif;
     font-weight: bold;
 }
-
-.top-3{
-    margin-top:200px;
-    position: relative;
+.friends-list{
+    margin-top: 60px;
     display: flex;
-    justify-content:center
+    margin-left: 20vw;
+    width: fit-content;
+}
+.butt-div{
+    margin-right: 50px;
+    font-family: 'Kanit', sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+}
+.butt-div a{
+    text-decoration: none;
+    color:#716c6c;
 }
 
-#first{
-    margin-top: -150px;
-    width:350px;
-    height:450px;
-    background-color: #FEE369;
-    border-radius: 20px;
+.add-friend-div{
+    margin-left: 500px;;
 }
-#second{
-    width:350px;
-    height: 300px;
-    background-color: #FAB078;
-    border-radius: 20px;
+#add-friend-btn{
+    background-color: #26804A;
+    color: #FFFFFF;
+    border-radius: 10px;
+    font-family: 'Kanit', sans-serif;
+    font-weight: bold;
+    border: none;
 }
-#third{
-    width:350px;
-    height: 300px;
-    background-color: #F2CA7E;
-    border-radius: 20px;
+.friends-search{
+    display: flex;
+    margin-top: 20px;
+    margin-left: 20vw;
 }
-
-.board{
-    margin-left: 150px;
-    margin-right: 150px;
+.lists{
+    margin-top: 20px;
+    margin-left: 20vw;
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #141622;
+    width: 42vw;
+    height: 50vh;
 }
-/* .board-head{
-
-} */
- .custom-table thead{
-    height: 50px;
- }
-.custom-table th{
-    background-color: #404147;
+.lists h3{
+    color: #FFFFFF;
+    font-family: 'Baloo Da', sans-serif;
+    font-weight: bold;
+}
+.utility{
+    display: flex;
+    position:absolute;
+    margin-left: 500px;
+}
+.utility button{
+    border: none;
+    background-color: transparent;
+}
+.icoon{
     color: #FFFFFF;
 }
-#rank{
-    width: 100px;
-}
-#rate-col{
-    color: #00A6ED;
-}
-#win-col{
-    color: #14CD74;
-}
-#lose-col{
-    color: #F94A63;
-}
-#score-col{
-    color: #5253E6;
-}
-
-
-
-
-
-
-
-
-
-
-
 
 
 
