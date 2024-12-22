@@ -1,0 +1,136 @@
+body{
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    height: auto; 
+}
+
+#logo{
+    width: 150px;
+    height: 50px;
+}
+
+#butt-style{
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
+    width: 90px;
+    border : 2px solid rgb(173, 173, 173);
+}
+#butt-style:hover{
+    background-color: #b74dc9;
+}
+
+#butt-style2{
+    margin-left: 5px;
+    background-color: #1586d1;
+    color: rgb(255, 255, 255);
+    width: 90px;
+    height: 45px;
+    border : 0;
+    border-color: rgb(0, 0, 0);
+}
+#butt-style2:hover{
+    background-color: #b74dc9;
+}
+.container {
+    padding: 0 15px; /* Add some padding to the container */
+    max-width: 100%;
+    margin: 0 auto; /* Center the container horizontally */
+    margin-left: 50px;
+}
+
+#title{
+    font-size: 96px;
+    font-family: Madimi One;
+    text-shadow:0 20px 12px #00000050;
+    color: #0C0C0C;
+    margin-top: 200px;
+    margin-left: 0;
+    text-align:left;
+
+}
+#subtitle
+{
+    font-size: 28px;
+    font-family:'ADLaM Display', sans-serif;
+    color: #000000;
+    margin-top: 0;
+    margin-left: 0;
+    text-align:left;
+}
+#play-btn{
+    width: 330px;
+    height: 80px;
+    font-size: 32px;
+    font-family:'ADLaM Display', sans-serif;
+    border : 0;
+    border-radius: 10px;
+    border-color: rgb(0, 0, 0);
+    margin-top: 150px;
+    margin-left: 0;
+}
+#slogan{
+    width: 250px;
+    height: 150px;
+    margin-top: 100px;
+    margin-left: 200px;
+}
+#bg{
+    background: url('../images/bg.png') no-repeat right center;
+    background-size: cover;
+    width: 800px;
+    height: 800px;
+    position: fixed;
+    right: 60px;
+    top: 100px;
+    z-index: -1;
+}
+
+
+@media (max-width: 1000px) {
+    .container
+    {
+        margin-left: 30px;
+    }
+    #logo{
+        width: 100px;
+        height: 50px;
+    }
+    #title {
+        font-size: 72px; /* Adjust font size for smaller screens */
+        /* margin-top: 150px; Adjust top margin for smaller screens */
+    }
+    #subtitle {
+        font-size: 18px; /* Adjust font size for smaller screens */
+    }
+    #bg{
+        width: 500px;
+        height: 500px;
+        right: 0px;
+        top: 50px;
+
+    }
+}
+
+@media (max-width: 576px) {
+    .container
+    {
+        margin-left: 10px;
+    }
+    #title {
+        font-size: 48px; /* Adjust font size for smaller screens */
+        /* margin-top: 100px; Adjust top margin for smaller screens */
+    }
+    #subtitle {
+        font-size: 14px; /* Adjust font size for smaller screens */
+    }
+    #bg{
+        width: 350px;
+        height: 350px;
+        right: 30px;
+        top: 100px;
+    }
+}
+
+
