@@ -169,8 +169,11 @@ li {
     height: 24px;
     left: 20px;
     top: 38%;
+    /* background-color: #141622;
+    background-image: url(../images/lightmode.png); */
+    
     transform: translateY(-50%);
-    pointer-events: none; /* Prevent the icon from blocking input */
+    pointer-events: none;
 }
 
 .notification-btn {

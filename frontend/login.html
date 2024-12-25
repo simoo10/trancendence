@@ -24,9 +24,9 @@
             <div class="col-md-6 col-lg-6 column right-side">
                 <div id="main-div">
                     <h1 id="subject">Log In</h1>
-                    <form method="POST" id="login-form">
+                    <form id="login-form">
                         <div class="mb-3 login-input">
-                            <label for="username" class="form-label">Email Address Or UserName</label>
+                            <label for="username" class="form-label">Email Address Or Username</label>
                             <div class="input-container">
                                 <input type="text" class="form-control" id="username" placeholder="Enter your username" required>
                                 <i class="bi bi-envelope-fill icon"></i>
@@ -44,11 +44,12 @@
                             <label class="form-check-label" for="rememberMe">Remember Me</label>
                         </div><br><br>
                         <button type="submit" class="btn btn-primary log-button" id="simple-log">Log In</button>
+                        <div id="errorMessage"></div>
                     </form>
                     <h2 id="or-line">------------------------------- OR ------------------------------</h2>
                     <div class="button-container">
                             <img src="images/42-icon.png" alt="42" class="img-fluid" id="icon42">
-                            <button type="submit" class="btn btn-primary log-button" id="log-42">Log In with 42</button>
+                            <button class="btn btn-primary log-button" id="log-42" >Log In with 42</button>
                         </div>
                     <br>
                     <p>Don't have an account? <a id="signup-link" onclick="loadPage('signup.html')">Sign Up</a></p>

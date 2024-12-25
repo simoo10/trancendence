@@ -116,6 +116,7 @@ class Login(APIView):
             }
             token = generate_jwt(payload)
             # User is authenticated, respond with success
+            return HttpResponseRedirect ("http://localhost:8080")
             return Response({'message': 'Login successful'}, status=status.HTTP_200_OK)
         else:
             # Authentication failed, respond with an error

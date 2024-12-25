@@ -43,7 +43,7 @@
                         <div class="mb-3 login-input">
                             <label for="password1" class="form-label">Password</label>
                             <div class="input-container">
-                                <input type="text" class="form-control" id="password1" placeholder="Enter your password" required>
+                                <input type="password" class="form-control" id="password1" placeholder="Enter your password" required>
                                 <i class="bi bi-lock-fill icon"></i>
                             </div>        
                         </div><br>
@@ -65,10 +65,12 @@
                     <div id="cont-42" class="button-container">
                             <img src="images/42-icon.png" alt="42" class="img-fluid" id="icon42">
                             <button id="log-42" class="log-button">Log In with 42</button>
-                    </div>   
-                </div><br>
-                <p>Already Having Acount? <a id="signup-link" onclick="loadPage('login.html')">Log In</a></p>
-                <button id="mode-btn" onclick="changemode()"></button>
+                    </div>
+                    <br>
+                    <p>Already Having Acount? <a id="signup-link" onclick="loadPage('login.html')">Log In</a></p>  
+                </div>
+                
+                <button id="mode-btn" onclick="toggleTheme()"></button>
             </div>
         </div>
     </div>
