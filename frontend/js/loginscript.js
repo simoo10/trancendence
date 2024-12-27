@@ -188,5 +188,5 @@ function loadPage(page) {
         });
 }
 window.onpopstate = function() {
-    loadPage(window.location.pathname.substring(1) || 'index.html');
+    loadPage(window.location.pathname.substring(1) || 'index');
 };
