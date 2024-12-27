@@ -135,7 +135,7 @@ function simplelog() {
             } else {
                 console.log('Signup failed:3', response.statusText);
                 await sleep(7000);
-                document.getElementById('responseMessage').textContent = "Signup failed: " + response.statusText;
+                // document.getElementById('responseMessage').textContent = "Signup failed: " + response.statusText;
             }
         } catch (error) {
             console.error('Error:4', error);
@@ -168,14 +168,17 @@ function loadPage(page) {
 
             // Replace body content
             document.body.innerHTML = doc.body.innerHTML;
-            if(page==='signup.html')
+            if(page==='signup')
             {
+                console.log('dkhelt 1');
+                sleep(7000);
                 simplelog();
                 log42();
             }
-            if(page==='login.html')
+            if(page==='login')
             {
-                console.log('login hna hai');
+                console.log('dkhelt 2');
+                sleep(7000);
                 login();
                 log42();
             }
