@@ -190,3 +190,7 @@ function loadPage(page) {
 window.onpopstate = function() {
     loadPage(window.location.pathname.substring(1) || 'index');
 };
+document.addEventListener('DOMContentLoaded', () => {
+    // Load the initial page
+    loadPage(window.location.pathname.substring(1) || 'index');
+} );
