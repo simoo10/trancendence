@@ -13,6 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
 function log42(){
     document.getElementById('log-42').addEventListener('click', async () => {
         console.log('Login with 42 button clicked');
+        const urlParams = new URLSearchParams(window.location.search);
+        const login = urlParams.get('login');
+        const email = urlParams.get('email');
+    console.log(`Logged in user: ${login}, Email: ${email}`);
+
         try {
             // Fetch the Intra42 authentication URL from the backend
             const response = await fetch('http://localhost:8000/api/login_with_42/', {
@@ -43,46 +48,39 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 function login() {
-    document.getElementById('login-form').addEventListener('submit', async function(event) {
-        console.log('Login form submitted');
+    document.getElementById('login-form').addEventListener('submit', async function (event) {
         event.preventDefault(); // Prevent default form submission
-    console.log('Login form submitted');
-        await sleep(9000);
-        
-        console.log('Signup form submitted');
-        await sleep(9000);
-        // Gather form data
+    
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
-
+    
         const data = { username, password };
-
+    
         try {
             // Send login data to the Django backend API endpoint
             const response = await fetch('http://127.0.0.1:8000/api/login/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-
                 },
                 body: JSON.stringify(data),
             });
-
-            // Check if the response is OK (200-299 status codes)
+    
             if (response.ok) {
-                console.log('Login form submitted');
-                await sleep(6000);
                 const responseData = await response.json();
-                // Handle successful login (store token or session)
-                alert('Login successful!');
+                
+                // Store the token in localStorage
+                localStorage.setItem('authToken', responseData.token);
+    
+                // Redirect to the home page
+                window.location.href = responseData.redirect_url;
             } else {
                 const errorData = await response.json();
-                document.getElementById('errorMessage').textContent = errorData.error || 'Login failed.';
+                // document.getElementById('errorMessage').textContent = errorData.error;
             }
         } catch (error) {
             console.error('Error:', error);
-            document.getElementById('errorMessage').textContent = 'Network error. Please try again.';
+            // document.getElementById('errorMessage').textContent = 'Network error. Please try again.';
         }
     });
 }
@@ -151,12 +149,51 @@ function simplelog() {
 // Call the simplelog function to attach the event listener
 
 
+//take the data:
 
-
-
+async function fetching_data(){
+    try{
+        const response = await fetch('http://localhost:8000/api/user_data/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        if(response.ok){
+            const data = await response.json();
+            console.log(data[0].image);
+            sleep(7000);
+            const profile = document.getElementsByClassName('profile')[0];
+            profile.innerHTML = `
+           
+            <div class="usr">
+            <img src="images/avatar.png" alt="profile">
+                <span class="username">${data[0].login}</span>
+                <span class="rank">Rank</span>
+            </div>
+                    `;
+                    return;
+        }
+        else{
+            console.error('Failed to fetch data');
+        }
+    }
+    catch(error){
+        console.error('Error fetching data:', error);
+    }
+    // return data;
+}
+function displayWindow(){
+    document.getElementById("add-friends").style.display = "block";
+    document.getElementById("online-list").style.display = "none";
+    document.getElementById("search-frds").style.display = "none";
+    document.getElementsByClassName("lists")[0].style.backgroundColor = "transparent";
+}
 
 
 function loadPage(page) {
+    console.log('Loading page:', page);
+    sleep(7000);
     fetch(page)
         .then(response => response.text())
         .then(data => {
@@ -167,7 +204,8 @@ function loadPage(page) {
             document.head.innerHTML = doc.head.innerHTML;
 
             // Replace body content
-            document.body.innerHTML = doc.body.innerHTML;
+            document.body.innerHTML =doc.body.innerHTML;
+           loadScript('js/loginscript.js'); 
             if(page==='signup')
             {
                 console.log('dkhelt 1');
@@ -182,7 +220,16 @@ function loadPage(page) {
                 login();
                 log42();
             }
-
+            if(page==='dashboard')
+            {
+                console.log('dkhelt 3');
+                fetching_data();
+            }
+            if(page==='friends')
+            {
+                console.log('dkhelt 4');
+                fetching_data();
+            }
             // Update the URL in the browser's history
             window.history.pushState({}, "", page);
         })
@@ -196,4 +243,12 @@ window.onpopstate = function() {
 document.addEventListener('DOMContentLoaded', () => {
     // Load the initial page
     loadPage(window.location.pathname.substring(1) || 'index');
+    // fetching_data();
 } );
+
+function loadScript(scriptSrc) {
+    const script = document.createElement('script');
+    script.src = scriptSrc;
+    script.defer = true;
+    document.body.appendChild(script);
+}

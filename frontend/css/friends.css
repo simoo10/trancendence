@@ -112,6 +112,7 @@ li {
 .search-place {
     position: relative;
     width: 400px;
+    display: flex;
 }
 
 #search-input {
@@ -255,7 +256,13 @@ li {
     color: #FFFFFF;
 }
 
-
+#friends-req{
+    /* margin-top: 20px; */
+    /* display: flex; */
+    /* margin-left: 20vw; */
+    background-color: #615FED;
+   
+}
 
 
 

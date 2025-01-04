@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   db:
@@ -42,7 +41,8 @@ services:
       - "8080:80"  # Maps port 80 on the host to the frontend service (nginx)
     networks:
       - app-network
-
+    volumes:
+      - ./frontend:/var/www/html  # Mounts the frontend directory to the nginx container
 networks:
   app-network:
     driver: bridge

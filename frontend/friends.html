@@ -28,13 +28,13 @@
                         </div>
                         <h3 id="menu">Menu</h3>
                         <li class="nav-item">
-                            <a class="nav-link sidebar-content" aria-current="page" href="#"><img src="images/dshboard.png" class="icon">Dashboard</a>
+                            <a class="nav-link sidebar-content" aria-current="page" onclick="loadPage('dashboard')"><img src="images/dshboard.png" class="icon">Dashboard</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link sidebar-content" href="#"><img src="images/leaderboard.png" class="icon">Leaderboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link sidebar-content" href="#"><img src="images/friends.png" class="icon">Friends</a>
+                            <a class="nav-link sidebar-content" onclick="loadPage('friends')"><img src="images/friends.png" class="icon">Friends</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link sidebar-content" href="#"><img src="images/chat.png" class="icon">Chat</a>
@@ -86,6 +86,7 @@
                     </div>
                 </nav>
                 <!--------------------------------------------- page content--------------------------------- -->
+                <div id="friends-page">
                 <div class="title-container">
                     <h1 id="friends-title">Friends</h1>
                 </div>
@@ -104,10 +105,10 @@
                             <a href="#" id="blocked-btn">Blocked</a>
                         </div>
                         <div class="add-friend-div">
-                            <button type="button" class="btn btn-primary btn-lg" id="add-friend-btn">Add Friend</button>
+                            <button type="button" class="btn btn-primary btn-lg" id="add-friend-btn" onclick="displayWindow()">Add Friend</button>
                         </div>
                 </div>
-                <div class="friends-search">
+                <div class="friends-search" id="search-frds">
                     <form class="d-flex">
                             <div class="search-place">
                                 <input class="form-control me-2" type="search" placeholder="Search by name or username" aria-label="Search" id="search-input">
@@ -120,58 +121,6 @@
                         <h3>online <span><!--online number--></span></h3>
                         <ul class="flex" id="list1">
                             <li class="d-flex" >
-                                <!-- <script>
-                                    function lists() {
-                                        const data = [{
-                                            username: "Username_0",
-                                            fullName: "fullName_0"
-                                        }, {
-                                            username: "Username_1",
-                                            fullName: "fullName_1"
-                                        }, {
-                                            username: "Username_2",
-                                            fullName: "fullName_2"
-                                        }, {
-                                            username: "Username_3",
-                                            fullName: "fullName_3"
-                                        }, {
-                                            username: "Username_4",
-                                            fullName: "fullName_4"
-                                        }, {
-                                            username: "Username_5",
-                                            fullName: "fullName_5"
-                                        }, {
-                                            username: "Username_6",
-                                            fullName: "fullName_6"
-                                        }, {
-                                            username: "Username_7",
-                                            fullName: "fullName_7"
-                                        }, {
-                                            username: "Username_8",
-                                            fullName: "fullName_8"
-                                        }, {
-                                            username: "Username_9",
-                                            fullName: "fullName_9"
-                                        }];
-                                        return data.map((user) => {
-                                            return (`
-                                                <li class="d-flex">
-                                                    <img src="images/avatar.png" alt="profile" style="width: 25px;height: 25px;">
-                                                    <div class="usr">
-                                                        <span class="username">${user.username}</span>
-                                                        <span class="fullName">${user.fullName}</span>
-                                                    </div>
-                                                    <div class="utility">
-                                                        <button type="button" id="play-btn"><i class="bi bi-flag-fill icoon"></i></button>
-                                                        <button type="button" id="chat-btn"><i class="bi bi-chat-fill icoon"></i></button>
-                                                        <button type="button" id="play-btn"><i class="bi bi-x-circle-fill icoon"></i></button>
-                                                        <button type="button" id="play-btn"><i class="bi bi-arrow-right-circle-fill icoon"></i></button>
-                                                    </div>
-                                                </li>
-                                            `);
-                                        });
-                                    }
-                                </script> -->
                                 <img src="images/avatar.png" alt="profile" style="width: 25px;height: 25px;">
                                 <!-- <div class="usr">
                                     <span class="username">Username</span>
@@ -184,11 +133,25 @@
                                 </div> -->
                             </li>
                         </ul>
-                    </div>                   
+                    </div> 
+                    <div id="add-friends" style="display: none;">
+                        <div class="friends-search" style="margin-left: 0;">
+                            <form class="d-flex">
+                                    <div class="search-place">
+                                        <input class="form-control me-2" type="search" placeholder="You can add friends with their username." aria-label="Search" id="search-input">
+                                        <img src="images/search.png" alt="search" class="search-icon">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-lg" id="friends-req">Send Request</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
                 </div>
             </main>
         </div>
     </div>
+
+    <script src="js/loginscript.js"></script>
     <script src="js/friendsdata.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
