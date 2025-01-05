@@ -84,6 +84,40 @@ function login() {
         }
     });
 }
+
+function friendsRequest() {
+    document.getElementById('request-form').addEventListener('submit', async function (event) {
+        event.preventDefault();
+    
+        const username = document.getElementById('username').value;
+        if(!username){
+            document.getElementById('request-resp').textContent ='Please enter a username';
+            return;
+        }    
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/?', {//kteb url dyal endpoint dyalk
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({username}),
+            });
+    
+            if (response.ok) {
+                const responseData = await response.json();
+                document.getElementById('request-resp').textContent ='Request send successfully to '+responseData.username;
+            } else {
+                const errorData = await response.json();
+                document.getElementById('request-resp').textContent = errorData.error;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('request-resp').textContent = 'Network error. Please try again.';
+        }
+    });
+}
+
+
 function simplelog() {
     document.getElementById('signup-form').addEventListener('submit', async function(event) {
         console.log('Login form submitted');
