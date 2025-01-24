@@ -1,0 +1,321 @@
+:root{
+    --background-color: #1D1F2E;
+    --background-color2: #141622;
+    --text-color:#ffffff;
+    --image: url('/images/darkmode.png');
+}
+[data-theme="light"]{
+    --background-color: #f5e0fff1;
+    --background-color2: #E3E3FD;
+    --text-color:#000000;
+    --image: url('/images/lightmode.png');
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    height: auto; 
+    display: flex;
+    background-color: var(--background-color);
+}
+
+#body-st {
+    background-color: var(--background-color);
+}
+
+#sidebarMenu {
+    background-color: var(--background-color2);
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+.navbar-custom {
+    margin-top: 15px;
+    background-color: #1D1F2E;
+    border-bottom: 2px solid #222455;
+}
+
+.navbar {
+    display: flex;
+    justify-content: center; /* This centers the items inside the navbar */
+    align-items: center; /* Ensures the items are vertically aligned */
+    background-color: transparent !important;
+}
+
+.logo-container {
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.logo-container::after {
+    content: '';
+    display: block;
+    width: 80%; 
+    height: 3px; 
+    background-color: rgb(98, 89, 89);
+    position: absolute; 
+    left: 8%;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#logo {
+    width: 250px;
+    height: 90px;
+    display: flex;
+}
+
+#menu {
+    margin-top: 20px;
+    margin-left: 4vw;
+    font-size: 25px;
+    color: #5356FB;
+    font-family: 'Inter', sans-serif;
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 5px;
+}
+
+.sidebar-content {
+    font-size: 20px;
+    margin-left: 3vw;
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    color: #A4B1CD;
+}
+
+li {
+    margin-top: 25px;
+}
+
+#settings {
+    margin-top: 400px;
+}
+
+#sett {
+    color: #5356FB;
+    font-size: 25px;
+    font-family: 'Inter', sans-serif;
+    margin-left: 60px;
+    margin-top: 20px;
+}
+
+#logout-btn {
+    background-color: #5356FB;
+    width: max-content;
+    border-radius: 50px;
+    margin-top: 30px;
+    margin-left: 70px;
+}
+
+#navbar-2 {
+    background-color: var(--background-color);
+}
+
+.search-place {
+    position: relative;
+    width: 400px;
+}
+
+#search-input {
+    padding-left: 30px; /* Add padding to make space for the icon */
+    background-color: var(--background-color1);
+    border-radius: 50px;
+    border-color: #F338F7;
+    height: 60px;
+    width: 30vw;
+    color: var(--text-color);
+}
+
+.search-place input::placeholder {
+    color: #A4B1CD;
+    font-size: 18px;
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+}
+
+.search-place .search-icon {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none; /* Prevent the icon from blocking input */
+}
+
+.side-ul {
+    margin-right: 100px;
+}
+
+.darkmode {
+    position: relative;
+    width: 200px;
+}
+
+.darkmode button {
+    margin-bottom: 15px;
+    width: 170px;
+    height: 50px;
+    padding-left: 30px; /* Add padding to make space for the icon */
+    background-color: #FFFFFF;
+    color: #364656;
+    border-radius: 20px;
+    border-color: #F338F7;
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+}
+
+.darkmode .dkmode-icon {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    left: 20px;
+    top: 38%;
+    /* background-color: #141622;
+    background-image: url(../images/lightmode.png); */
+    
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.notification-btn {
+    background: none;
+    border: none;
+    position: relative;
+}
+
+.notification-btn .icon-not {
+    width: 55px; /* Adjust icon size */
+    height: auto;
+    margin-top: -8px;
+    margin-right: 20px;
+}
+main{
+    background-color: #ffffff;
+}
+
+.title-container{
+    margin-top: 20px;
+    width: fit-content;
+    display: flex;
+}
+#friends-title{
+    color: #FFFFFF;
+    font-family: 'Baloo Da', sans-serif;
+    font-weight: bold;
+}
+.friends-list{
+    margin-top: 60px;
+    display: flex;
+    margin-left: 20vw;
+    width: fit-content;
+}
+.butt-div{
+    margin-right: 50px;
+    font-family: 'Kanit', sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+}
+.butt-div a{
+    text-decoration: none;
+    color:#716c6c;
+}
+
+.add-friend-div{
+    margin-left: 500px;;
+}
+#add-friend-btn{
+    background-color: #26804A;
+    color: #FFFFFF;
+    border-radius: 10px;
+    font-family: 'Kanit', sans-serif;
+    font-weight: bold;
+    border: none;
+}
+.friends-search{
+    display: flex;
+    margin-top: 20px;
+    margin-left: 20vw;
+}
+.lists{
+    margin-top: 20px;
+    margin-left: 20vw;
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #141622;
+    width: 42vw;
+    height: 50vh;
+}
+.lists h3{
+    color: #FFFFFF;
+    font-family: 'Baloo Da', sans-serif;
+    font-weight: bold;
+}
+.utility{
+    display: flex;
+    position:absolute;
+    margin-left: 500px;
+}
+.utility button{
+    border: none;
+    background-color: transparent;
+}
+.icoon{
+    color: #FFFFFF;
+}
+#username{
+    padding-left: 30px; /* Add padding to make space for the icon */
+    background-color: #1D1F2E;
+    border-radius: 50px;
+    border-color: #F338F7;
+    height: 60px;
+    width: 30vw;
+    color: #ffffff;
+}
+#friends-req{
+    /* margin-top: 20px; */
+    /* display: flex; */
+    margin-left: 5vw;
+    background-color: #615FED;
+   
+}
+
+
+
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+    .sidebar.show {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 250px;
+        z-index: 1000;
+        background-color: #141622; /* Ensure the background color is set */
+    }
+    #toggle-button {
+        display: block;
+        position: relative;
+        background-color: #f1f1f1;
+        color: #141622;
+    }
+}
+
+@media (min-width: 769px) {
+    #toggle-button {
+        display: none;
+    }
+}

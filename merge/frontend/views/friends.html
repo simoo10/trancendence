@@ -1,0 +1,82 @@
+<div id="friends-page">
+    <div class="title-container">
+        <h1 id="friends-title">Friends</h1>
+    </div>
+    <!------------------Online div---------------------->
+    <div class="friends-list">
+            <div class="butt-div">
+                <a onclick="displayWindow('online-list')" id="online-btn" style="color:#716c6c">Online</a>
+            </div>
+            <div class="butt-div">
+                <a onclick="displayWindow('all')" id="all-btn" style="color:#716c6c">All</a>
+            </div>
+            <div class="butt-div">
+                <a onclick="displayWindow('pending')" id="pending-btn" style="color:#716c6c">Pending</a>
+            </div>
+            <div class="butt-div">
+                <a onclick="displayWindow('blocked')" id="blocked-btn" style="color:#716c6c">Blocked</a>
+            </div>
+            <div class="add-friend-div">
+                <button type="button" class="btn btn-primary btn-lg" id="add-friend-btn" onclick="displayWindow('add-friends')">Add Friend</button>
+            </div>
+    </div>
+    <div class="friends-search" id="search-frds">
+        <form class="d-flex">
+                <div class="search-place">
+                    <input class="form-control me-2" type="search" placeholder="Search by name or username" aria-label="Search" id="search-input">
+                    <img src="images/search.png" alt="search" class="search-icon">
+                </div>
+        </form>
+    </div>
+    <div class="lists">
+        <div id="online-list" class="friends-windows">
+            <h3>online <span><!--online number--></span></h3>
+            <ul class="flex" id="list1">
+                <li class="d-flex" >
+                    <img src="images/avatar.png" alt="profile" style="width: 25px;height: 25px;">
+                    <!-- <div class="usr">
+                        <span class="username">Username</span>
+                    </div>
+                    <div class="utility">
+                        <button type="button" id="play-btn"><i class="bi bi-flag-fill icoon"></i></button>
+                        <button type="button" id="chat-btn"><i class="bi bi-chat-fill icoon"></i></button>
+                        <button type="button" id="play-btn"><i class="bi bi-x-circle-fill icoon"></i></button>
+                        <button type="button" id="play-btn"><i class="bi bi-arrow-right-circle-fill icoon"></i></button>
+                    </div> -->
+                </li>
+            </ul>
+        </div> 
+        <div id="add-friends" class="friends-windows" style="display: none;">
+            <div class="friends-search" style="margin-left: 0;">
+                <form id="request-form" class="d-flex">
+                        <div class="search-place">
+                            <input class="form-control me-2" type="search" placeholder="You can add friends with their username." aria-label="Search" id="username">
+                            <img src="images/search.png" alt="search" class="search-icon">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg" id="friends-req">Send Request</button>
+                </form>
+            </div>
+            <div id="request-resp"></div>
+        </div>
+        <div id="all" class="friends-windows">
+            <h3>All friends <span><!--online number--></span></h3>
+            <ul class="flex" id="list1">
+               
+            </ul>
+        </div> 
+        <div id="pending" class="friends-windows">
+            <h3>pending <span><!--online number--></span></h3>
+            <ul class="flex" id="list1">
+
+            </ul>
+        </div> 
+        <div id="blocked" class="friends-windows">
+            <h3>blocked <span><!--online number--></span></h3>
+            <ul class="flex" id="list1">
+
+            </ul>
+        </div> 
+        <div id="all" class="friends-windows">
+        </div>
+    </div>
+</div>

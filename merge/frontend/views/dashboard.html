@@ -1,0 +1,69 @@
+<div id="dashboard-page">
+    <h2 id="dash-title">Dashboard</h2>
+    <div class="profile">
+        <img src="images/avatar.png" alt="profile">
+        <div class="usr">
+            <span class="username">Username</span>
+            <span class="rank">Rank</span>
+        </div>
+    </div>
+    <div class="container">
+        <div class="box winning-rate">
+            <h3>Winning Rate</h3>
+        </div>
+        <div class="box latest-match">
+            <h3>Latest Match</h3>
+        </div>
+        <div class="box ranking">
+            <h3>Your Rank</h3>
+        </div>
+        <div class="btn-group-vertical">
+            <div class="game-mode">
+                <button type="button" class="btn-primary main-btn">New Game</button>
+                <img src="images/modegame.png" alt="mode" class="mode-icon">
+            </div>
+            <div class="game-mode">
+                <button type="button" class="btn-primary main-btn">Play IA</button>
+                <img src="images/iagame.png" alt="mode" class="mode-icon">
+            </div>
+            <div class="game-mode">
+                <button type="button" class="btn-primary main-btn">PLay a Friend</button>
+                <img src="images/friendgame.png" alt="mode" class="mode-icon">
+            </div>
+            <div class="game-mode">
+                <button type="button" class="btn-primary main-btn">Tournaments</button>
+                <img src="images/tourgame.png" alt="mode" class="mode-icon">
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="col-md-10 col-lg-10 dashtable">
+            <table class="table custom-table">
+                <thead>
+                    <tr class="first-th">
+                        <th colspan="4">Match History</th>
+                    </tr>
+                    <tr class="second-th">
+                        <th>Players</th>
+                        <th> result</th>
+                        <th> Goals</th>
+                        <th> Date</th>
+                    </tr>
+                </thead>
+                <tbody id="history-body">
+                    <!-- <tr class="body-td">
+                        <td>user 1</td>
+                        <td>w</td>
+                        <td>10</td>
+                        <td rowspan="2">2024-12-07</td>
+                    </tr>
+                    <tr>
+                        <td>user 2</td>
+                        <td>l</td>
+                        <td>5</td>
+                    </tr> -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

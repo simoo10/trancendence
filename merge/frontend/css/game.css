@@ -1,0 +1,343 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+body, html {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: #000033;
+    color: #00ffff;
+    font-family: 'Orbitron', sans-serif;
+}
+
+#mode-selection {
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    flex-direction: column;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap; /* Allows buttons to wrap if screen space is limited */
+}
+
+.mode-button {
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(0, 255, 255, 0.3));
+    color: #00ffff;
+    padding: 15px 30px;
+    border: 2px solid #00ffff;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 16px;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+.mode-button:hover {
+    background: rgba(0, 255, 255, 0.3);
+    box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff;
+    transform: scale(1.1);
+}
+
+#tournament-controls {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.tournament-button {
+    background: linear-gradient(135deg, rgba(255, 0, 255, 0.1), rgba(255, 0, 255, 0.3));
+    color: #ff00ff;
+    padding: 15px 30px;
+    border: 2px solid #ff00ff;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 16px;
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+}
+
+.tournament-button:hover {
+    background: rgba(255, 0, 255, 0.3);
+    box-shadow: 0 0 20px #ff00ff, 0 0 40px #ff00ff;
+    transform: scale(1.1);
+}
+
+#close-button {
+    /* display: block; */
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+    background-color: rgba(255, 0, 0, 0.6);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: bold;
+}
+
+#close-button:hover {
+    background-color: rgba(255, 0, 0, 0.8);
+    box-shadow: 0 0 10px #ff0000;
+}
+
+#game-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+}
+
+#gameCanvas {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+}
+
+#camera-controls {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background: rgba(0, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    cursor: move;
+    user-select: none;
+    transition: transform 0.2s ease;
+    z-index: 10;
+}
+
+#camera-controls:hover {
+    transform: scale(1.05);
+    background: rgba(0, 255, 255, 0.2);
+}
+
+#camera-controls button {
+    position: absolute;
+    background: none;
+    border: none;
+    color: #00ffff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#camera-controls button:hover {
+    color: #ffdf00;
+    transform: scale(1.2);
+    text-shadow: 0 0 5px #ffdf00;
+}
+
+.countdown-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 51, 0.8);
+    color: #00ffff;
+    font-size: 72px;
+    font-weight: bold;
+    z-index: 1000;
+    text-shadow: 0 0 10px #00ffff;
+}
+
+#tournament-display {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 51, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 100;
+    color: #00ffff;
+    max-width: 800px;
+    width: 90%;
+    border: 2px solid #00ffff;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+}
+
+.tournament-header {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.tournament-header h2 {
+    margin: 0;
+    color: #00ffff;
+    text-shadow: 0 0 5px #00ffff;
+}
+
+.tournament-header p {
+    margin: 5px 0;
+    color: #aaaaff;
+}
+
+.tournament-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.tournament-info h3 {
+    color: #ff00ff;
+    text-shadow: 0 0 5px #ff00ff;
+}
+
+.tournament-info div {
+    background: rgba(0, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #00ffff;
+}
+
+#particles-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* Chat styles */
+#chat-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    background-color: rgba(0, 0, 51, 0.9);
+    border: 2px solid #00ffff;
+    border-radius: 10px;
+    overflow: hidden;
+    z-index: 1000;
+    font-family: 'Orbitron', sans-serif;
+    transition: height 0.3s ease-in-out;
+}
+
+#chat-container.minimized {
+    height: 40px;
+}
+
+#chat-container.expanded {
+    height: 400px;
+}
+
+#chat-header {
+    background-color: rgba(0, 255, 255, 0.2);
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+#chat-title {
+    color: #00ffff;
+    font-weight: bold;
+}
+
+#chat-minimize {
+    background: none;
+    border: none;
+    color: #00ffff;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+#chat-content {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 40px);
+}
+
+#friend-select {
+    background-color: rgba(0, 255, 255, 0.1);
+    border: none;
+    color: #00ffff;
+    padding: 5px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#chat-messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.chat-message {
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    border-radius: 10px;
+    max-width: 80%;
+}
+
+.chat-message.received {
+    background-color: rgba(0, 255, 255, 0.1);
+    align-self: flex-start;
+}
+
+.chat-message.sent {
+    background-color: rgba(255, 0, 255, 0.1);
+    align-self: flex-end;
+    margin-left: auto;
+}
+
+#chat-input {
+    display: flex;
+    padding: 10px;
+}
+
+#chat-input input {
+    flex-grow: 1;
+    background-color: rgba(0, 255, 255, 0.1);
+    border: 1px solid #00ffff;
+    border-radius: 5px;
+    color: #00ffff;
+    padding: 5px;
+    margin-right: 5px;
+}
+
+#chat-input button {
+    background-color: rgba(0, 255, 255, 0.2);
+    border: 1px solid #00ffff;
+    border-radius: 5px;
+    color: #00ffff;
+    cursor: pointer;
+    padding: 5px 10px;
+}

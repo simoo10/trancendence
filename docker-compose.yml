@@ -28,7 +28,7 @@ services:
       db:
         condition: service_healthy       
     ports:
-      - "8000:8000"  # Maps port 8000 on the host to the backend
+      - "8001:8000"  # Maps port 8000 on the host to the backend
     networks:
       - app-network
 

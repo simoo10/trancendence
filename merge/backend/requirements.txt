@@ -1,0 +1,55 @@
+Django>=4.2
+
+djangorestframework
+django-cors-headers
+psycopg2-binary==2.9.9
+requests
+PyJWT
+djangorestframework-simplejwt
+# Add other dependencies as needed
+
+# Daphne for ASGI server
+daphne>=4.0,<5.0
+
+# Django Channels for WebSocket handling
+channels>=4.0,<5.0
+
+# TensorFlow and Keras for AI
+tensorflow>=2.10
+keras>=2.10
+
+# Additional AI-related libraries (if needed)
+numpy>=1.21
+pandas>=1.3
+scikit-learn>=1.0
+
+# WebSocket support
+channels-redis>=4.0  # If using Redis as a Channels layer
+
+# Database support (adjust based on your database)
+psycopg2>=2.9  # PostgreSQL
+mysqlclient>=2.1  # MySQL/MariaDB (if using)
+
+# Debugging and development tools (optional)
+django-debug-toolbar>=3.2
+
+# Linting and formatting (optional for development)
+black>=22.0
+flake8>=4.0
+
+# File handling (optional for file uploads)
+pillow>=9.0
+
+# Environment variable management (optional)
+python-decouple>=3.6
+
+# Testing (optional)
+pytest-django>=4.5
+pytest>=7.0
+
+daphne
+
+whitenoise
+
+
+
