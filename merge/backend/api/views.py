@@ -90,6 +90,8 @@ class Signup(APIView):
 class Login(APIView):
     permission_classes = [AllowAny]  # Allow anyone to access this endpoint
 
+    print ("Login APIView reached")  # Debug
+
     def post(self, request):
         # Deserialize the incoming data using the LoginSerializer
         serializer = LoginSerializer(data=request.data)
@@ -97,6 +99,8 @@ class Login(APIView):
         if serializer.is_valid():  # Check if data is valid
             login = serializer.validated_data['login']
             password = serializer.validated_data['password']
+
+            print ("1-login: ", login, "password:", password)  # Debug
 
             # Authenticate the user
             user = authenticate(request, login=login, password=password)
@@ -112,6 +116,7 @@ class Login(APIView):
                     'refresh_token': refresh_token,
                     'message': 'Login successful',
                 }, status=status.HTTP_200_OK)
+                print ("logging in: ",response)  # Debug
                 return response
             else:
                 return JsonResponse({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -259,10 +264,12 @@ def print_access_token_lifetime():
 
 
 class data_user(APIView):
+    print ("data_user APIView reached")  # Debug
     permission_classes = [IsAuthenticated]
     print("i'm here\n\n\n\m")
     def get(self, request):
         user = request.user  # This will be the authenticated Intra42User
+        print("2-user: ", user)
         user_data = {
             "login": user.login,
             "email": user.email,

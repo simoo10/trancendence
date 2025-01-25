@@ -215,6 +215,7 @@
 
         <script type="module">
             import { Game, WebSocketManager } from "./game/js/setup2.js";
+            import {username} from "./js/main.js"
 
             let currentWebSocket = null;
             let currentGame = null;
@@ -279,7 +280,7 @@
             }
 
             function startGame(mode, online) {
-                console.log("Starting game: ", mode);
+                console.log("Starting game: ", mode, "for user: ", username);
                 cleanupPreviousMode();
 
                 const gameContainer = document.getElementById('game-container');
@@ -290,7 +291,7 @@
                 const wsUrl = "ws://localhost:8000/ws/pong/";
                 currentGame = new Game();
                 currentGame.online = online;
-                currentWebSocket = new WebSocketManager(wsUrl, currentGame, mode);
+                currentWebSocket = new WebSocketManager(wsUrl, currentGame, mode, username);
 
                 currentGame.animate();
 

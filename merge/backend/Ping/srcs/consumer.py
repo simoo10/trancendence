@@ -17,6 +17,7 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
+active_users = []
 active_games = {}
 lobby = []  # Fixed typo from 'looby'
 
@@ -38,6 +39,7 @@ class PongConsumer(AsyncWebsocketConsumer):
         self.dem = {}
         self.match = None
         self.player = ""
+        self.username = ""
 
     async def connect(self):
         self.for_lobby = [self.channel_name, self]
@@ -83,6 +85,8 @@ class PongConsumer(AsyncWebsocketConsumer):
                         "winner": "You won! Opponent disconnected."
                     }
                 )
+                if self.username in active_users:
+                    active_users.pop(self.username)
             del active_games[self.room_name]
 
         # Handle lobby cleanup
@@ -100,16 +104,34 @@ class PongConsumer(AsyncWebsocketConsumer):
         message_type = data.get("type", None)
         self.type = message_type
         self.dem = data.get('demonsions', {})
+        self.username = data.get('username', "")
 
         if message_type in ["AiOpenent", "BotOpenent", "LocalMultiplayerOpenent"]:
             await self.handle_single_player_game(message_type, data)
         elif message_type == "OnlineMultiplayerOpenent":
-            lobby.append(self.for_lobby)
-            await self.handle_online_multiplayer(lobby, self.dem)
+            if self.username not in active_users:
+                print ("--active_users--", active_users)
+                lobby.append(self.for_lobby) 
+                await self.handle_online_multiplayer(lobby, self.dem)
+                print ("2---active_users--", active_users)
+            else :
+                await self.send(text_data=json.dumps({
+                    "type": "failed",
+                    "title": "game creation failed",
+                    "reason": "Player is already in an existing online game"
+                }))
         elif message_type == "create_tournament":
-            await self.handle_create_tournament(data)
+            await self.handle_create_tournament(data) if self.username not in active_users else await self.send(text_data=json.dumps({
+                "type": "failed",
+                "title": "tournament creation failed",
+                "reason": "Player is already in an existing online game"
+            }))
         elif message_type == "join_tournament":
-            await self.handle_join_tournament(data)
+            await self.handle_join_tournament(data) if self.username not in active_users else await self.send(text_data=json.dumps({
+                "type": "failed",
+                "title": "tournament join failed",
+                "reason": "Player is already in an existing online game"
+            }))
         elif message_type == "list_tournaments":
             await self.handle_list_tournaments()
         elif message_type == "tournament_match_complete":
@@ -223,7 +245,12 @@ class PongConsumer(AsyncWebsocketConsumer):
             player2[1].game.online = True
             player1[1].done = False
             player2[1].done = False
-            
+
+            player1[1].username = player1[1].username
+            player1[1].opponentUsername = player2[1].username
+
+            player2[1].username = player2[1].username
+            player2[1].opponentUsername = player1[1].username
 
             # Add both players to the group
             for player in [player1, player2]:
@@ -239,6 +266,8 @@ class PongConsumer(AsyncWebsocketConsumer):
                 "state": "Match found! You are Player 1 (Blue).",
                 "Iam": "Blue",
                 "player": "player1",
+                "opp": player2[1].username,
+                "username": player1[1].username,
                 "tournament": player1[1].trnmt
             })
             await player1[1].channel_layer.send(player2[0], {
@@ -246,13 +275,17 @@ class PongConsumer(AsyncWebsocketConsumer):
                 "state": "Match found! You are Player 2 (RED).",
                 "Iam": "RED",
                 "player": "player2",
+                "opp": player1[1].username,
+                "username": player2[1].username,
                 "tournament": player2[1].trnmt
             })
             print ("room_name: " , player1[1].room_name)
             asyncio.create_task(player1[1].run_game())
+            active_users.append(self.username)
             return player1[1].room_name
         else:
             await self.send(text_data=json.dumps({"type": "waiting"}))
+            active_users.append(self.username)
         return None
 
     async def game_state(self, event):
@@ -271,12 +304,21 @@ class PongConsumer(AsyncWebsocketConsumer):
         # await self.send(text_data=json.dumps(event))
         if self.room_name in active_games:
             print ("delete : ", self.room_name)
+            if active_games[self.room_name].online and self.trnmt is False:
+                if self.username in active_users:
+                    active_users.pop(self.username)
             del active_games[self.room_name]
         if self.trnmt:
             if self.tournament:
+                winner = [self.game.player1, "player1"] if self.game.player1.score > self.game.player2.score else [self.game.player2, "player2"]
+                loser = [self.game.player1, "player1"] if self.game.player1.score < self.game.player2.score else [self.game.player2, "player2"]
                 await self.send(text_data=json.dumps({
                     "type": "game_over",
                     "winner": "player1" if self.game.player1.score > self.game.player2.score else "player2",
+                    "winner_username": winner[0].username,
+                    "loser_username": loser[0].username,
+                    "winner_score": winner[0].score,
+                    "loser_score": loser[0].score,
                     "match_id": self.match["match_id"]
                 }))
             winner = [self.game.player1, "player1"] if self.game.player1.score > self.game.player2.score else [self.game.player2, "player2"]
@@ -299,6 +341,9 @@ class PongConsumer(AsyncWebsocketConsumer):
                 await self.handle_tournament_match_complete(None)
             else:
                 print ("sending tournament info to loser: ", self)
+
+                if self.username in active_users:
+                    active_users.pop(self.username)
                 # while (self.tournament):
                 # try:
                 await self.handle_tournament_update()
@@ -332,7 +377,8 @@ class PongConsumer(AsyncWebsocketConsumer):
     async def handle_create_tournament(self, data):
         if self.trnmt:
             await self.send(text_data=json.dumps({
-                "type": "tournament_creation_failed",
+                "type": "failed",
+                "title": "tournament creation failed",
                 "reason": "Player is already in an existing tournament"
             }))
             return None
@@ -360,12 +406,14 @@ class PongConsumer(AsyncWebsocketConsumer):
             "players_needed": num_players - 1,
             "is_online": is_online
         }))
+        active_users.append(self.username)
 
     async def handle_join_tournament(self, data):
         if self.trnmt:
             print ("player already in tournament")
             await self.send(text_data=json.dumps({
-                "type": "tournament_join_failed",
+                "type": "failed",
+                "title": "tournament join failed",
                 "reason": "Player is already in an existing tournament"
             }))
             return None
@@ -375,6 +423,7 @@ class PongConsumer(AsyncWebsocketConsumer):
         )
         
         if success:
+            active_users.append(self.username)
             self.trnmt = True
             tournament = self.tournament_manager.get_tournament(tournament_id)
             self.tournament = tournament
@@ -402,7 +451,8 @@ class PongConsumer(AsyncWebsocketConsumer):
                 }))
         else:
             await self.send(text_data=json.dumps({
-                "type": "tournament_join_failed",
+                "type": "failed",
+                "title": "tournament join failed",
                 "reason": "Tournament full or not found"
             }))
 

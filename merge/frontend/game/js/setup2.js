@@ -5,6 +5,7 @@ import { OrbitControls } from "./OrbitControls.js";
 import { keyState, sendKeyState } from './keys.js';
 import { FontLoader } from './FontLoader.js';
 import { TextGeometry } from './TextGeometry.js';
+import { username } from "../../js/main.js";
 
 // Remember that the (x, z) plane is the (x, y) plane in the 3D world
 
@@ -735,6 +736,8 @@ class Game {
         this.sendKeyState = this.setup.sendKeyState;
         this.states = this.setup.states;
         this.player = null;
+        this.username = "";
+        this.oppenentUserName = "";
         
         // for event listeners
         this.eventHandlers = {}; 
@@ -1384,9 +1387,11 @@ class TournamentDisplay {
 
 // make a web Socket manager to manage the websockets
 class WebSocketManager {
-    constructor(url, game, type) {
+    constructor(url, game, type, username) {
         this.url = url;
         this.game = game;
+        this.username = username;
+        this.game.username = username;
         this.socket = new WebSocket(this.url);
         this.game.gameSocket = this.socket;
         this.type = type;
@@ -1430,23 +1435,23 @@ class WebSocketManager {
                 const message = {
                     type: this.type,
                     name: tournamentName,
-                    num_players: numPlayers
+                    num_players: numPlayers,
+                    username: this.username
                 };
                 this.socket.send(JSON.stringify(message));
             });
         } else {
             const message = {
-                type: this.type
+                type: this.type,
+                username: this.username
             };
             this.socket.send(JSON.stringify(message));
         }
     }
 
-
-    
     onMessage(event) {
         let data = JSON.parse(event.data);
-        // console.log (data);
+        if (data.type != "game_state") console.log (data);
         
         if (data.type === 'tournament_update' || data.type === 'tournament_complete') {
             this.handleTournamentUpdate(data.display_data);
@@ -1530,6 +1535,14 @@ class WebSocketManager {
             }
             this.game.stateOfGame = "Running";
         }
+        if (data.type == "failed") {
+            console.log ("failed");
+            // pop up a notification that the game failed to start and close the socket
+            // this.game.destroy();
+            this.toggleButtons(false);
+            this.showErrorNotification(data);
+            this.close();
+        }
     }
 
     onClose(event) {
@@ -1542,6 +1555,55 @@ class WebSocketManager {
             console.log('Closing WebSocket connection');
             this.socket.close(); // Closes the WebSocket connection
             this.socket = null; // Clear the reference
+        }
+    }
+
+    toggleButtons(play) {
+        const modeButtons = document.getElementById('mode-selection');
+        const tournamentControls = document.getElementById('tournament-controls');
+        const closeButton = document.getElementById('close-button');
+        
+        if (play) {
+            modeButtons.style.display = 'none';
+            tournamentControls.style.display = 'none';
+            closeButton.style.display = 'block';
+        } else if (!play) {
+            modeButtons.style.display = 'flex';
+            tournamentControls.style.display = 'flex';
+            closeButton.style.display = 'block';
+        }
+    }
+
+
+    showErrorNotification(data) {
+        // Check if the received data is valid and has the necessary fields
+        if (data && data.type === "failed" && data.title && data.reason) {
+            // Create a notification element
+            const notification = document.createElement("div");
+            notification.classList.add("notification");
+            notification.style.position = "fixed";
+            notification.style.top = "10px";
+            notification.style.left = "50%";
+            notification.style.transform = "translateX(-50%)";
+            notification.style.padding = "10px 20px";
+            notification.style.backgroundColor = "#f44336";
+            notification.style.color = "#fff";
+            notification.style.borderRadius = "5px";
+            notification.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.1)";
+            notification.style.zIndex = "1000";
+            
+            // Set the notification content
+            notification.innerHTML = `<strong>${data.title}</strong><br>${data.reason}`;
+            
+            // Append the notification to the body
+            document.body.appendChild(notification);
+    
+            // Automatically remove the notification after 5 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        } else {
+            console.error("Invalid notification data");
         }
     }
     // closeTournamentList() {

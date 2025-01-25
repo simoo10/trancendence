@@ -250,6 +250,9 @@ class Game:
         self.done = False
         self.reward = 0
 
+        self.username = ""
+        self.opponentUsername = ""
+
     # Function to predict where the ball will land
     def predictBallLanding(self, player):
         currentx, currentz = self.ball.get_position()
@@ -895,7 +898,11 @@ class Game:
                 "player2": {
                     "score": self.player2.score
                 },
-                "winner": "player1" if self.player1.score > self.player2.score else "player2"
+                "winner": "player1" if self.player1.score > self.player2.score else "player2",
+                "winner_username": self.username if self.player1.score > self.player2.score else self.opponentUsername,
+                "loser_username": self.opponentUsername if self.player1.score > self.player2.score else self.username,
+                "winner_score": self.player1.score if self.player1.score > self.player2.score else self.player2.score,
+                "loser_score": self.player2.score if self.player1.score > self.player2.score else self.player1.score
             }            
         else:
             return {

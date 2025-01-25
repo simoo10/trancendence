@@ -1,4 +1,5 @@
 //all the routes are defined here
+import { getCookie } from "./rendringData.js"
 
 let login_success = false;
 
@@ -19,17 +20,17 @@ function sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
 
-function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-    return null;
-  }
+// function getCookie(name) {
+//     const value = `; ${document.cookie}`;
+//     const parts = value.split(`; ${name}=`);
+//     if (parts.length === 2) return parts.pop().split(";").shift();
+//     return null;
+//   }
 async function fetchUserData(accessToken) {
     accessToken = getCookie('access_token');
 
     try {
-        console.log(accessToken);
+        console.log("access token : ", accessToken);
 
         const response = await fetch('http://localhost:8000/api/user_data/', {
             method: 'GET',
@@ -91,12 +92,14 @@ const profile_content = document.getElementById('profiles-content');
 let css_link = null;
 const navbar = document.getElementById('landing-navbar');
 const home_navbar = document.getElementById('home-navbar');
+let username = "";
 //function to handle navigation
 
 export async function handling_navigation(route, updateHistory = true) {
     const parsedUrl = new URL(window.location.href);
     const params = new URLSearchParams(parsedUrl.search);
     const code = params.get("code");
+    console.log("code : ", params);
     //http://localhost:8000/api/intra42callback/?code=${code}
     if (code) {
         // window.location.href = `http://localhost:8000/api/intra42callback/?code=${code}`;
@@ -109,6 +112,7 @@ export async function handling_navigation(route, updateHistory = true) {
             } else {
                 throw new Error("Failed to fetch user data");
                 handling_navigation('/login');
+                return;
             }
         }
         catch (error) {
@@ -117,7 +121,46 @@ export async function handling_navigation(route, updateHistory = true) {
     }
 
     const exact_route = routes.find((r) => r.link === route);
-    console.log("Exact Route: ",exact_route);
+    console.log("Exact Route: ",route);
+
+    // hna rah kanshof wash l user mlogi wla la, ila kan mlogi rah ila msha l login wla l signup ghaydoz l dashboard
+    // makansh mlogi ghaydir redirect l login finma mash mn ghir landing kaydoz liha ila bgha wakha mamlogish
+    if (exact_route && route != '/landing') {
+        const access_token = getCookie('access_token');
+
+        console.log("Access Token: ", access_token);
+
+        try{
+            const response = await fetch('http://localhost:8000/api/user_data/', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${access_token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            if(response.ok){
+                const responseData = await response.json();
+                // const data = await response.json();
+                console.log ("user is loged in :): ", responseData);
+
+                if (route == '/login' || route == '/signup' )
+                    return (handling_navigation('/dashboard'));
+                username = responseData.login;
+                
+            }
+            else {
+                console.error('Failed to fetch data, redirecting to login page');
+                if (route != '/login' && route != '/signup' )
+                    return (handling_navigation('/login'));
+            }
+        }
+        catch(error){
+            console.error('Error fetching data redirecting to login page:', error);
+            if (route != '/login' && route != '/signup' )
+                return (handling_navigation('/login'));
+        }
+    }
+
     if (exact_route) {
         get_content(exact_route.template);
         if (updateHistory) {
@@ -131,6 +174,7 @@ export async function handling_navigation(route, updateHistory = true) {
 
 
 //function to get the content of the template
+import { log42, login, handleCallbackResponse } from "./authentication.js";
 
 export async function get_content(template){
 
@@ -170,14 +214,14 @@ export async function get_content(template){
                 navbar.style.display = "none";
                 home_navbar.style.display = "none";
                 if(template==="login.html"){
-                import(`./authentication.js`).then(module => {
-                    module.log42();
-                    module.login();
-                    module.handleCallbackResponse();
-                    console.log("Login 5assha t5dem!!------------------------------>",login_success);
-                }).catch(error => {
-                    console.error('Error in importing the module:', error);
-                } );
+                    import(`./authentication.js`).then(module => {
+                        module.log42();
+                        module.login();
+                        module.handleCallbackResponse();
+                        console.log("Login 5assha t5dem!!------------------------------mal hadhsi>",login_success);
+                    }).catch(error => {
+                        console.error('Error in importing the module:', error);
+                    } );
                 }
                 else if(template==="signup.html")
                 {
@@ -318,4 +362,6 @@ document.addEventListener("DOMContentLoaded", () => {
     handling_navigation(initialRoute, false);
 });
 
+
+export {username};
 

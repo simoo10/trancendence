@@ -1,10 +1,19 @@
 //Function to render data of profile in the dashboard
-function getCookie(name) {
+export function getCookie(name) {
+    console.log("Trying to get cookie:", name);  // Log the cookie name you're looking for
     const value = `; ${document.cookie}`;
+    console.log("document.cookie:", document.cookie);  // Log the entire cookies string to check its contents
     const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
+    console.log("split result:", parts);  // Log the result of splitting by the cookie name
+    if (parts.length === 2) {
+        const cookieValue = parts.pop().split(";").shift();
+        console.log("Found cookie:", cookieValue);  // Log the value of the cookie if found
+        return cookieValue;
+    }
+    console.log("Cookie not found");
     return null;
-  }
+}
+
 function render_profile(data){
     const jsonString = data.image.replace(/'/g, '"');
     const imageData = JSON.parse(jsonString);
