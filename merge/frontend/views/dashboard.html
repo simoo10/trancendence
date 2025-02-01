@@ -10,6 +10,47 @@
     <div class="container">
         <div class="box winning-rate">
             <h3>Winning Rate</h3>
+            <div id="arc-container">
+                <svg width="200" height="100" viewBox="0 0 200 100">
+                    <!-- Background Arc -->
+                    <path
+                      d="M10,90 A90.5,90 0 0,1 190,90"
+                      fill="none"
+                      stroke="#3d3d3d"
+                      stroke-width="15"
+                    ></path>
+              
+                    <!-- Progress Arc -->
+                    <path
+                      id="progress-arc"
+                      d="M10,90 A90.5,90 0 0,1 190,90"
+                      fill="none"
+                      stroke="url(#gradient)"
+                      stroke-width="15"
+                      stroke-dasharray="283"
+                      stroke-dashoffset="283"
+                    ></path>
+              
+                    <!-- Gradient for the Arc -->
+                    <defs>
+                      <linearGradient id="gradient" gradientTransform="rotate(90)">
+                        <stop offset="0%" stop-color="#a855f7" />
+                        <stop offset="100%" stop-color="#3b82f6" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+              
+                  <div class="percentage-text" id="percentage-text">0%</div>
+                  <div class="label" style="color: aliceblue;font-weight: bolder;">WIN</div>
+            </div>
+            <div class="stats">
+                <div class="win-stats">
+                    <p>11 Wins</p>
+                </div>
+                <div class="lose-stats">
+                    <p>3 Loses</p>
+                </div>
+            </div>
         </div>
         <div class="box latest-match">
             <h3>Latest Match</h3>
@@ -27,7 +68,7 @@
                 <img src="images/iagame.png" alt="mode" class="mode-icon">
             </div>
             <div class="game-mode">
-                <button type="button" class="btn-primary main-btn">PLay a Friend</button>
+                <button type="button" class="btn-primary main-btn">PLay with Friend</button>
                 <img src="images/friendgame.png" alt="mode" class="mode-icon">
             </div>
             <div class="game-mode">
@@ -37,7 +78,7 @@
         </div>
     </div>
     <div class="container">
-        <div class="col-md-10 col-lg-10 dashtable">
+        <div class="col-12 col-xs-12 col-sm-12 col-lg-10 dashtable">
             <table class="table custom-table">
                 <thead>
                     <tr class="first-th">

@@ -31,6 +31,9 @@ urlpatterns = [
     # path('gameover/' , views.gameover, name='gameover'),
     # path('leaderboard/' , views.leaderboard, name='leaderboard'),
 
+    path('api/player-stats/<str:username>/', views.get_player_stats, 
+         name='player_stats'),
+
 ]
 
 # websocket_urlpatterns = [

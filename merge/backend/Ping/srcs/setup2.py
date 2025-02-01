@@ -81,6 +81,8 @@ class Player:
         self.init_x = x
         self.init_z = z
 
+        self.username = ""
+
         self.demonsions = demonsions
 
         # player's score
@@ -252,6 +254,9 @@ class Game:
 
         self.username = ""
         self.opponentUsername = ""
+
+        # self.player1.username = self.username
+        # self.player2.username = self.opponentUsername
 
     # Function to predict where the ball will land
     def predictBallLanding(self, player):
@@ -885,7 +890,7 @@ class Game:
         self.done = False
         if self.player1.score == self.WinScore or self.player2.score == self.WinScore:
             self.done = True
-            self.resetGame()
+            if self.Train: self.resetGame()
     
     # Function to get the game state
     def get_state(self):
@@ -902,7 +907,8 @@ class Game:
                 "winner_username": self.username if self.player1.score > self.player2.score else self.opponentUsername,
                 "loser_username": self.opponentUsername if self.player1.score > self.player2.score else self.username,
                 "winner_score": self.player1.score if self.player1.score > self.player2.score else self.player2.score,
-                "loser_score": self.player2.score if self.player1.score > self.player2.score else self.player1.score
+                "loser_score": self.player2.score if self.player1.score > self.player2.score else self.player1.score,
+                "message": f"{self.username} won the game" if self.player1.score > self.player2.score else f"{self.opponentUsername} won the game"
             }            
         else:
             return {

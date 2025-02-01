@@ -1,16 +1,11 @@
 //Function to render data of profile in the dashboard
 export function getCookie(name) {
-    console.log("Trying to get cookie:", name);  // Log the cookie name you're looking for
     const value = `; ${document.cookie}`;
-    console.log("document.cookie:", document.cookie);  // Log the entire cookies string to check its contents
     const parts = value.split(`; ${name}=`);
-    console.log("split result:", parts);  // Log the result of splitting by the cookie name
     if (parts.length === 2) {
         const cookieValue = parts.pop().split(";").shift();
-        console.log("Found cookie:", cookieValue);  // Log the value of the cookie if found
         return cookieValue;
     }
-    console.log("Cookie not found");
     return null;
 }
 
@@ -88,12 +83,16 @@ function friendsRequest() {
             document.getElementById('request-resp').textContent ='Please enter a username';
             document.getElementById('request-resp').style.color="#f4000c";
             return;
-        }    
+        }
+        // data = {
+        //     'username':username,
+        // }
         try {
             const response = await fetch('http://127.0.0.1:8000/api/', {//kteb url dyal endpoint dyalk
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    
                 },
                 body: JSON.stringify({username}),
             });

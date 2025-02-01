@@ -159,7 +159,12 @@ body{
     width:25vw;
     background-color: transparent;
     border-radius: 28px;
-    height: 55px;
+    height: 55px;;
+    color: var(--text-color);
+}
+.form-control:focus{
+    background-color: transparent;
+    color: var(--text-color);
 }
 .form-control::placeholder{
     color: #938F99;
@@ -218,8 +223,9 @@ body{
 
 #icon42{
     position: absolute;
-    margin-left: 39%;
-    margin-top: 1%;
+    margin-left: 14vw;
+    margin-top: 1vh;
+    align-items: center;
     width: auto;
     height: 2vh;
 }

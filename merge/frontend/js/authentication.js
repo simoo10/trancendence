@@ -221,11 +221,11 @@ export function login() {
                 const responseData = await response.json();
                 
                 // Store the token in localStorage
-                console.log('Token:', responseData.access_token);
                 // localStorage.setItem('authToken', responseData.access_token);
                 // khass dakshi i tsava f cookie mashi f local storage, rah kadoz l dashboard t9leb 3la access_token, so khassek tl9aha, wnta fash yalah katloga maatl9ahash
                 // btw, reda kaysseyfet l access_token f response_data as access_token, so khasssek t3ayet f response_data.access_token wnta kat9leb 3la response_data.token so ghatl9a teb ...
                 document.cookie = `access_token=${responseData.access_token}; path=/; Secure`;
+                document.cookie = `refresh_token=${responseData.refresh_token}; path=/; Secure`;
                 console.log('Login successful:', responseData);
                 // Redirect to the home page
                 import(`./main.js`).then(module => {
@@ -241,6 +241,35 @@ export function login() {
         } catch (error) {
             console.error('Error:', error);
             // document.getElementById('errorMessage').textContent = 'Network error. Please try again.';
+        }
+    });
+}
+
+export async function logout() {
+    
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+        console.log("han hna--> ");
+        try{
+            const resp = await fetch('http://localhost:8000/api/logout/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Authorization": `Bearer ${access_token}`
+                },
+            });
+            if(resp.ok)
+            {
+                console.log('Logout successful');
+                document.cookie = "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                document.cookie = "refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                return(handling_navigation('/login'));
+            }
+            else{
+                console.error('Failed to logout');
+            }
+        }
+        catch(error){
+            console.error('Error:', error);
         }
     });
 }

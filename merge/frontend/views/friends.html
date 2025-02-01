@@ -5,16 +5,16 @@
     <!------------------Online div---------------------->
     <div class="friends-list">
             <div class="butt-div">
-                <a onclick="displayWindow('online-list')" id="online-btn" style="color:#716c6c">Online</a>
+                <a onclick="displayWindow('online-list')" class="friends-hover" id="online-btn" style="color:#716c6c">Online</a>
             </div>
             <div class="butt-div">
-                <a onclick="displayWindow('all')" id="all-btn" style="color:#716c6c">All</a>
+                <a onclick="displayWindow('all')" class="friends-hover" id="all-btn" style="color:#716c6c">All</a>
             </div>
             <div class="butt-div">
-                <a onclick="displayWindow('pending')" id="pending-btn" style="color:#716c6c">Pending</a>
+                <a onclick="displayWindow('pending')" class="friends-hover" id="pending-btn" style="color:#716c6c">Pending</a>
             </div>
             <div class="butt-div">
-                <a onclick="displayWindow('blocked')" id="blocked-btn" style="color:#716c6c">Blocked</a>
+                <a onclick="displayWindow('blocked')" class="friends-hover" id="blocked-btn" style="color:#716c6c">Blocked</a>
             </div>
             <div class="add-friend-div">
                 <button type="button" class="btn btn-primary btn-lg" id="add-friend-btn" onclick="displayWindow('add-friends')">Add Friend</button>
@@ -23,12 +23,12 @@
     <div class="friends-search" id="search-frds">
         <form class="d-flex">
                 <div class="search-place">
-                    <input class="form-control me-2" type="search" placeholder="Search by name or username" aria-label="Search" id="search-input">
+                    <input class="form-control me-2" type="search" placeholder="Search by name or username" aria-label="Search" id="search-input1">
                     <img src="images/search.png" alt="search" class="search-icon">
                 </div>
         </form>
     </div>
-    <div class="lists">
+    <div class="col-lg-7 col-md-11 lists">
         <div id="online-list" class="friends-windows">
             <h3>online <span><!--online number--></span></h3>
             <ul class="flex" id="list1">
@@ -48,8 +48,8 @@
         </div> 
         <div id="add-friends" class="friends-windows" style="display: none;">
             <div class="friends-search" style="margin-left: 0;">
-                <form id="request-form" class="d-flex">
-                        <div class="search-place">
+                <form id="request-form" class="d-flex" style="width: 500px;">
+                        <div class="search-place" id="search-place-req">
                             <input class="form-control me-2" type="search" placeholder="You can add friends with their username." aria-label="Search" id="username">
                             <img src="images/search.png" alt="search" class="search-icon">
                         </div>

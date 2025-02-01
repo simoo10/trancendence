@@ -1,48 +1,48 @@
 
-    <div class="container-fluid">
-        <div class="row">
-            <!--hadi dyal welcome side-->
-            <div class="col-md-6 column d-lg-block left-side">
-                <a id="home-link" data-route="/landing"><img src="images/logo1.png" alt="logo" class="img-fluid" id="logo"></a>
-                <h1 id="login-title">WELCOME TO THE PONG GAME</h1>
-                <img src="images/ping.png" alt="pong" class="img-fluid" id="pong">
-            </div>
-            <!--hadi dyal login side-->
-            <div class="col-md-12 col-lg-6 column right-side">
-                <div id="main-div">
-                    <h1 id="subject">Log In</h1>
-                    <form id="login-form">
-                        <div class="mb-3 login-input">
-                            <label for="username" class="form-label">Email Address Or Username</label>
-                            <div class="input-container">
-                                <input type="text" class="form-control" id="username" placeholder="Enter your username" required>
-                                <i class="bi bi-envelope-fill icon"></i>
-                            </div>        
-                        </div><br>
-                        <div class="mb-3 login-input">
-                            <label for="password" class="form-label">Password</label>
-                            <div class="input-container">
-                                <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
-                                <i class="bi bi-lock-fill icon"></i>
-                            </div>
-                        </div><br><br>
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="rememberMe">
-                            <label class="form-check-label" for="rememberMe">Remember Me</label>
-                        </div><br><br>
-                        <button type="submit" class="btn btn-primary log-button" id="simple-log">Log In</button>
-                        <div id="errorMessage"></div>
-                    </form>
-                    <h2 id="or-line">----------------------------------- OR -----------------------------------</h2>
-                    <div class="button-container">
-                            <img src="images/42-icon.png" alt="42" class="img-fluid" id="icon42">
-                            <button class="btn btn-primary log-button" id="log-42" >Log In with 42</button>
+<div class="container-fluid">
+    <div class="row">
+        <!--hadi dyal welcome side-->
+        <div class="col-md-6 column d-lg-block left-side">
+            <a id="home-link" data-route="/landing"><img src="images/logo1.png" alt="logo" class="img-fluid" id="logo"></a>
+            <h1 id="login-title">WELCOME TO THE PONG GAME</h1>
+            <img src="images/ping.png" alt="pong" class="img-fluid" id="pong">
+        </div>
+        <!--hadi dyal login side-->
+        <div class="col-md-12 col-lg-6 column right-side">
+            <div id="main-div">
+                <h1 id="subject">Log In</h1>
+                <form id="login-form">
+                    <div class="mb-3 login-input">
+                        <label for="username" class="form-label">Email Address Or Username</label>
+                        <div class="input-container">
+                            <input type="text" class="form-control" id="username" placeholder="Enter your username" required>
+                            <i class="bi bi-envelope-fill icon"></i>
+                        </div>        
+                    </div><br>
+                    <div class="mb-3 login-input">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="input-container">
+                            <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                            <i class="bi bi-lock-fill icon"></i>
                         </div>
-                    <br>
-                    <p>Don't have an account? <a id="signup-link" data-route="/signup"> Sign Up</a></p>
-                </div>
-                <button id="mode-btn" onclick="toggleTheme()"></button>
+                    </div><br><br>
+                    <div id="wrong-credentials">
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="rememberMe">
+                        <label class="form-check-label" for="rememberMe">Remember Me</label>
+                    </div><br><br>
+                    <button type="submit" class="btn btn-primary log-button" id="simple-log">Log In</button>
+                </form>
+                <h2 id="or-line">----------------------------------- OR -----------------------------------</h2>
+                <div class="button-container">
+                        <img src="images/42-icon.png" alt="42" class="img-fluid" id="icon42">
+                        <button class="btn btn-primary log-button" id="log-42" >Log In with 42</button>
+                    </div>
+                <br>
+                <p>Don't have an account? <a id="signup-link" data-route="/signup"> Sign Up</a></p>
             </div>
+            <button id="mode-btn" onclick="toggleTheme()"></button>
         </div>
     </div>
-
+</div>

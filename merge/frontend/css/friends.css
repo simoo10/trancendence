@@ -124,17 +124,20 @@ li {
 
 .search-place {
     position: relative;
-    width: 400px;
+    width: 100px;
 }
-
-#search-input {
+/* .form-control{
+    border-radius: 100px;
+} */
+#search-input1 {
     padding-left: 30px; /* Add padding to make space for the icon */
     background-color: var(--background-color1);
-    border-radius: 50px;
+    border-radius: 5px;
     border-color: #F338F7;
     height: 60px;
-    width: 30vw;
+    width:47vw;
     color: var(--text-color);
+    display:flex;
 }
 
 .search-place input::placeholder {
@@ -218,7 +221,8 @@ main{
 .friends-list{
     margin-top: 60px;
     display: flex;
-    margin-left: 20vw;
+    flex-wrap: wrap;
+    margin-left: 10vw;
     width: fit-content;
 }
 .butt-div{
@@ -231,9 +235,8 @@ main{
     text-decoration: none;
     color:#716c6c;
 }
-
 .add-friend-div{
-    margin-left: 500px;;
+    margin-left: 15vw;
 }
 #add-friend-btn{
     background-color: #26804A;
@@ -243,18 +246,27 @@ main{
     font-weight: bold;
     border: none;
 }
+.friends-hover:hover{
+    color: #164871;
+    cursor: pointer;
+}
 .friends-search{
     display: flex;
     margin-top: 20px;
-    margin-left: 20vw;
+    margin-left: 10vw;
+    /* border-radius: 0px; */
+}
+
+#search-place-req{
+    width: 80vw;
 }
 .lists{
     margin-top: 20px;
-    margin-left: 20vw;
+    margin-left: 10vw;
     display: flex;
     flex-wrap: wrap;
     background-color: #141622;
-    width: 42vw;
+    /* width: 42vw; */
     height: 50vh;
 }
 .lists h3{
@@ -262,6 +274,8 @@ main{
     font-family: 'Baloo Da', sans-serif;
     font-weight: bold;
 }
+
+
 .utility{
     display: flex;
     position:absolute;
@@ -293,29 +307,8 @@ main{
 
 
 
-@media (max-width: 768px) {
-    .sidebar {
-        display: none;
-    }
-    .sidebar.show {
-        display: block;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 250px;
-        z-index: 1000;
-        background-color: #141622; /* Ensure the background color is set */
-    }
-    #toggle-button {
-        display: block;
-        position: relative;
-        background-color: #f1f1f1;
-        color: #141622;
-    }
-}
-
-@media (min-width: 769px) {
-    #toggle-button {
-        display: none;
+@media (max-width: 900px) {
+    #search-input1{
+        width:300px ;
     }
 }

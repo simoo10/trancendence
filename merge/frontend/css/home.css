@@ -2,12 +2,14 @@
 :root{
     --background-color: #1D1F2E;
     --background-color2: #141622;
+    --background-color3: rgba(0, 0, 0, 0.8);
     --text-color:#ffffff;
     --image: url('/images/darkmode.png');
 }
 [data-theme="light"]{
     --background-color: #E2E2FC;
     --background-color2: #EEF5FF;
+    --background-color3: rgba(255, 255, 255, 0.8);
     --text-color:#000000;
     --image: url('/images/lightmode.png');
 }
@@ -30,10 +32,11 @@ body {
 #sidebarMenu {
     background-color: var(--background-color2);
     height: 100vh;
-    width: 13vw;
-    border-radius: 10px;
+    /* width: 13vw; */
+    border-radius: 10px; 
+    /* display: block; */
     overflow-y: auto;
-    overflow-x: auto;
+    position: fixed;
 }
 
 .navbar-custom {
@@ -92,6 +95,7 @@ body {
 }
 
 .sidebar-content {
+    /* display: block; */
     font-size: 18px;
     margin-left: 2vw;
     text-decoration: none;
@@ -103,6 +107,7 @@ body {
     color: #5356FB;
     cursor: pointer;
 }
+
 li {
     margin-top: 20px;
 }
@@ -124,7 +129,7 @@ li {
     width: max-content;
     border-radius: 50px;
     margin-top: 30px;
-    margin-left: 70px;
+    margin-left: 2vw;
 }
 
 #navbar-2 {
@@ -216,9 +221,12 @@ main{
 
 
 
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
     .sidebar {
         display: none;
+    }
+    #sidebarMenu{
+        background-color: var(--background-color3);
     }
     .sidebar.show {
         display: block;
@@ -226,18 +234,25 @@ main{
         top: 0;
         left: 0;
         width: 250px;
-        z-index: 1000;
-        background-color: #141622; /* Ensure the background color is set */
+        height: 100vh;
+        z-index: 1;
     }
     #toggle-button {
-        display: block;
-        position: relative;
-        background-color: #f1f1f1;
+        background-color: #000000;
         color: #141622;
+        width: 80px;
+        height: 50px;
+        border-radius: 20px;
+        border:none;
+    }
+    .nav-butt{
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
     }
 }
 
-@media (min-width: 769px) {
+@media (min-width: 1200px) {
     #toggle-button {
         display: none;
     }

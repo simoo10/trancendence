@@ -1,7 +1,10 @@
 //all the routes are defined here
 import { getCookie } from "./rendringData.js"
+import { combinedChat, check_expiration } from "../game/js/setup2.js";
+
 
 let login_success = false;
+// const combinedChat = window.combinedChat;
 
 const routes = [
     {link:'/',template:'landing.html'},
@@ -50,10 +53,10 @@ async function fetchUserData(accessToken) {
             console.log("hada refresh_token: ",refreshToken);
         if (!refreshToken) {
             console.log("ana hna!!");
-        const refreshResponse = await fetch("http://localhost:8000/token_refresh/", {
+        const refreshResponse = await fetch("http://localhost:8000/api/token_refresh/", {
           method: "POST",
             headers: {
-          "Content-Type": "application/json",
+                "Content-Type": "application/json",
             },
             body: JSON.stringify({ refresh: refreshToken }),
         });
@@ -92,7 +95,8 @@ const profile_content = document.getElementById('profiles-content');
 let css_link = null;
 const navbar = document.getElementById('landing-navbar');
 const home_navbar = document.getElementById('home-navbar');
-let username = "";
+const chat_content = document.getElementById('chat-container');
+export let username = "";
 //function to handle navigation
 
 export async function handling_navigation(route, updateHistory = true) {
@@ -108,6 +112,8 @@ export async function handling_navigation(route, updateHistory = true) {
             if (response.ok) {
                 const data = await response.json();
                 console.log("Data: ", data);
+                document.cookie = `access_token=${data.access_token}; SameSite=None; Secure`;
+                document.cookie = `refresh_token=${data.refresh_token}; SameSite=None; Secure`;
                 // handling_navigation('/dashboard');
             } else {
                 throw new Error("Failed to fetch user data");
@@ -130,32 +136,15 @@ export async function handling_navigation(route, updateHistory = true) {
 
         console.log("Access Token: ", access_token);
 
-        try{
-            const response = await fetch('http://localhost:8000/api/user_data/', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${access_token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-            if(response.ok){
-                const responseData = await response.json();
-                // const data = await response.json();
-                console.log ("user is loged in :): ", responseData);
-
-                if (route == '/login' || route == '/signup' )
-                    return (handling_navigation('/dashboard'));
-                username = responseData.login;
-                
-            }
-            else {
-                console.error('Failed to fetch data, redirecting to login page');
-                if (route != '/login' && route != '/signup' )
-                    return (handling_navigation('/login'));
-            }
+        try {
+            if (await check_expiration (route) && (route == '/login' || route == '/signup' ))
+                return (handling_navigation('/dashboard'));
+            // if (route == '/login' || route == '/signup' )
+            //     return (handling_navigation('/dashboard'));
+            // i need here to throw an error which specify it needs to go to dashboard when already logged
         }
-        catch(error){
-            console.error('Error fetching data redirecting to login page:', error);
+        catch(error) {
+            console.error('2--Error fetching data redirecting to login page:', error);
             if (route != '/login' && route != '/signup' )
                 return (handling_navigation('/login'));
         }
@@ -244,6 +233,24 @@ export async function get_content(template){
                 home_navbar.style.display = "block";
             }
             if(template==="dashboard.html"){
+
+                // fetching previous games
+                try {
+                    const response = await fetch(`http://localhost:8000/game/api/player-stats/${username}/`);
+                    console.log("Username: ", username);
+                    console.log("Response: ", response);
+                    console.log("Response: ", response.status);
+                    // Check if the response is OK (status code 200-299)
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    console.log('Player stats:', data);
+                } catch (error) {
+                    console.error('Error loading player stats:', error);
+                }
                 // if(!log42Complete){
                     //     console.log("!!!!!!!!!!!!!!!!!!!!!");
                     //     handling_navigation('/login');
@@ -277,6 +284,8 @@ export async function get_content(template){
                 document.title = css_file;
                 profile_content.style.display = "none";
                 content.style.display = "block";
+                chat_content.style.display = "none";
+                console.log("chat content: ", chat_content);
                 content.innerHTML = data;
             }
             else if (template === "game.html") {
@@ -287,6 +296,7 @@ export async function get_content(template){
                 home_navbar.style.display = "none";
                 // nshowi l game content
                 game_content.style.display = "block";
+                chat_content.style.display = "block";
                 console.log ("start game");
             }
             else {
@@ -296,6 +306,7 @@ export async function get_content(template){
                 document.head.appendChild(navbar_css);
                 content.style.display = "none";
                 profile_content.style.display = "block";
+                chat_content.style.display = "block";
                 profile_content.innerHTML = data;
 
             }
@@ -362,6 +373,34 @@ document.addEventListener("DOMContentLoaded", () => {
     handling_navigation(initialRoute, false);
 });
 
+export function setUsername(newUsername) {
+    username = newUsername;
+}
+const toggleButton = document.getElementById("toggle-button");
+const sidebarMenu = document.getElementById("sidebarMenu");
 
-export {username};
+// Toggle sidebar visibility
+toggleButton.addEventListener("click", (e) => {
+  sidebarMenu.classList.toggle("show");
+  // Stop event propagation
+  e.stopPropagation();
+});
+
+// Hide sidebar when clicking outside
+document.addEventListener("click", (e) => {
+  // Check if the click is outside both the sidebar and the toggle button
+  if (!sidebarMenu.contains(e.target) && !toggleButton.contains(e.target)) {
+    sidebarMenu.classList.remove("show");
+  }
+});
+
+// Prevent sidebar clicks from hiding it
+sidebarMenu.addEventListener("click", (e) => {
+  // Allow clicks on links to work
+  if (e.target.tagName === "A") return; // Allow navigation
+  e.stopPropagation();
+});
+
+
+// export {username};
 

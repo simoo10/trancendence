@@ -5,7 +5,9 @@
 # cd backend
 # echo "herrrrrrrrrrrrrrr\n"
 
+
 python3.10 manage.py createsuperuser --username=reda --password=123
+
 
 python3.10 manage.py makemigrations
 python3.10 manage.py migrate

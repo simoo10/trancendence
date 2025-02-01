@@ -715,6 +715,73 @@ class ScoreDisplay {
         this.currentScoreModels = { player1: null, player2: null };
     }
 }
+class GameOverlay {
+    constructor() {
+        this.overlay = document.getElementById('gameOverlay');
+        this.waitingContent = document.getElementById('waitingContent');
+        this.gameOverContent = document.getElementById('gameOverContent');
+        this.playAgainButton = document.getElementById('playAgainButton');
+        
+        // Player 1 elements
+        this.player1Name = document.getElementById('player1Name');
+        this.player1Info = document.getElementById('player1Info');
+        
+        this.playAgainButton.addEventListener('click', () => {
+            window.location.reload();
+        });
+    }
+
+    show(type, data = {}) {
+        this.overlay.style.display = 'block';
+        
+        // Hide Three.js scene
+        const canvas = document.querySelector('canvas');
+        if (canvas) {
+            canvas.style.opacity = '0.3';
+            canvas.style.transition = 'opacity 0.3s ease';
+        }
+        
+        switch(type) {
+            case 'waiting':
+                this.waitingContent.style.display = 'flex';
+                this.gameOverContent.style.display = 'none';
+                this.player1Name.textContent = data.username || 'Player 1';
+                this.player1Info.textContent = 'Ready to play';
+                break;
+                
+            case 'gameOver':
+                this.waitingContent.style.display = 'none';
+                this.gameOverContent.style.display = 'block';
+                
+                const winner = data.winner;
+                const winnerName = winner === data.username ? 'You' : winner;
+                
+                document.querySelector('.winner-announcement').textContent = data.message;
+                    // winner === data.username ? 'Victory!' : 'Game Over';
+                
+                document.getElementById('matchPlayers').textContent = 
+                    `${data.username} vs ${data.opponentUsername || 'Opponent'}`;
+
+                document.getElementById('player1Score').textContent = data.player1Score || '0';
+                document.getElementById('player2Score').textContent = data.player2Score || '0';
+                
+                // Add victory effects if player won
+                if (winner === data.username) {
+                    this.gameOverContent.style.animation = 'victoryPulse 2s infinite';
+                }
+                break;
+        }
+    }
+
+    hide() {
+        this.overlay.style.display = 'none';
+        // Show Three.js scene
+        const canvas = document.querySelector('canvas');
+        if (canvas) {
+            canvas.style.opacity = '1';
+        }
+    }
+}
 
 // Set up the game
 class Game {
@@ -738,6 +805,8 @@ class Game {
         this.player = null;
         this.username = "";
         this.oppenentUserName = "";
+
+        this.friend = null;
         
         // for event listeners
         this.eventHandlers = {}; 
@@ -754,6 +823,9 @@ class Game {
         this.trnmt = false;
 
         this.message = null;
+
+        this.overlay = new GameOverlay();
+        this.overlay.hide();
         
         // set up optimal camera position
         this.camera.lookAt(0, 0, 0);
@@ -914,6 +986,8 @@ class Game {
         if (this.stateOfGame == "Running") {
             // this.scene.add(this.group);
             // set up camera
+            this.overlay.hide();
+
             if (!this.isInitialized) {
                 this.reinitializeGame();
             }
@@ -954,20 +1028,33 @@ class Game {
             
         }
         else if (this.stateOfGame == "Game Over") {
-            // here render a scene for game over
-            this.table.updateText3(this.message, 0, 0, this.gameOverScene);
-            this.isInitialized = false;
-            this.renderer.render(this.gameOverScene, this.camera);
-            this.controls.update();
+            // // here render a scene for game over
+            // this.table.updateText3(this.message, 0, 0, this.gameOverScene);
+            // this.isInitialized = false;
+            // this.renderer.render(this.gameOverScene, this.camera);
+            // this.controls.update();
+
+            this.overlay.show('gameOver', { 
+                username: this.username,
+                opponentUsername: this.oppenentUserName,
+                winner: this.message.includes('won') ? this.message.split(' ')[0] : null,
+                message: this.message,
+                player1Score: this.player1.score,
+                player2Score: this.player2.score
+            });
 
         }
         else if (this.stateOfGame == "Waiting") {
 
-            // here render a this. for waiting for oppenent
-            this.table.updateText3("Waiting", 0, 0, this.waitingScene);
-            this.isInitialized = false;
-            this.renderer.render(this.waitingScene, this.camera);
-            this.controls.update();
+            // // here render a this. for waiting for oppenent
+            // this.table.updateText3("Waiting", 0, 0, this.waitingScene);
+            // this.isInitialized = false;
+            // this.renderer.render(this.waitingScene, this.camera);
+            // this.controls.update();
+            this.overlay.show('waiting', { 
+                username: this.username,
+                opponentUsername: this.oppenentUserName
+            });
 
         }
         else if (this.stateOfGame == "Game Start") {
@@ -1158,6 +1245,7 @@ class Game {
         console.log("Destroying the game...");
 
         this.running = false;
+        this.overlay.hide();
 
         window.removeEventListener('keydown', this.eventHandlers.keydown);
         window.removeEventListener('keyup', this.eventHandlers.keyup);
@@ -1201,6 +1289,9 @@ class Game {
         if (canvas && canvas.parentNode) {
             canvas.parentNode.removeChild(canvas);
         }
+
+        // dispose of overlay
+        this.overlay = null;
     
         // Nullify references to objects
         this.setup = null;
@@ -1227,6 +1318,49 @@ class Game {
 }
 
 //////////////////////////////////////////////////////////
+import { handling_navigation } from "../../js/main.js";
+
+export let currentWebSocket = null;
+export let currentGame = null;
+export let playing = false;
+
+export function getCurrentWebSocket ()  {
+    return currentWebSocket;
+}
+
+export function setCurrentWebSocket (webSocket) {
+    currentWebSocket = webSocket;
+}
+
+export function getCurrentGame () {
+    return currentGame;
+}
+
+export function setCurrentGame (game) {
+    currentGame = game;
+}
+
+export function getPlaying () {
+    return playing;
+}
+
+export function setPlaying (play) {
+    playing = play;
+}
+
+export function cleanupPreviousMode() {
+    if (currentWebSocket != null) {
+        currentWebSocket.close();
+        currentWebSocket = null;
+    }
+    
+    if (currentGame != null) {
+        console.log ("destroying game : ", currentGame);
+        currentGame.destroy();
+        currentGame = null;
+        console.log ("removed current game", currentGame);
+    }
+}
 ///////////////////
 class TournamentDisplay {
     constructor() {
@@ -1242,7 +1376,7 @@ class TournamentDisplay {
         const closeButton = document.createElement('button');
         closeButton.textContent = '✕';
         closeButton.style.cssText = `
-            position: absolute;
+        position: absolute;
             right: 10px;
             top: 10px;
             background: #ff4444;
@@ -1387,7 +1521,7 @@ class TournamentDisplay {
 
 // make a web Socket manager to manage the websockets
 class WebSocketManager {
-    constructor(url, game, type, username) {
+    constructor(url, game, type, username, friend) {
         this.url = url;
         this.game = game;
         this.username = username;
@@ -1395,6 +1529,9 @@ class WebSocketManager {
         this.socket = new WebSocket(this.url);
         this.game.gameSocket = this.socket;
         this.type = type;
+        
+        this.game.friend = friend;
+        this.friend = friend;
         
         // Bind the methods
         this.onOpen = this.onOpen.bind(this);
@@ -1443,8 +1580,11 @@ class WebSocketManager {
         } else {
             const message = {
                 type: this.type,
-                username: this.username
+                username: this.username,
+                friend: this.friend
             };
+
+            console.log("Sending message: ", message);
             this.socket.send(JSON.stringify(message));
         }
     }
@@ -1466,7 +1606,8 @@ class WebSocketManager {
                 const message = {
                     type: "tournament_created",
                     name: tournamentName,
-                    num_players: numPlayers
+                    num_players: numPlayers,
+                    username: this.username
                 };
                 this.socket.send(JSON.stringify(message));
             });
@@ -1489,17 +1630,32 @@ class WebSocketManager {
             //     this.game.controls.enabled = false;
             //     this.game.controls.autoRotate = true;
             // }
-            if (data.winner == "You won! Opponent disconnected.") {
-                this.game.message = data.winner;
+            // if (data.winner == "You won! Opponent disconnected.") {
+            //     this.game.message = data.winner;
+            // }
+            // else if (data.winner == this.game.player) {
+            //     this.game.message = "You Won";
+            //     if (this.game.trnmt) this.game.message = "You Won, Wait For The Next Round :)";
+            // }
+            // else {
+            //     if (this.game.online) this.game.message = "You Lost";
+            //     else if (this.game.trnmt) this.game.message = "You Lost, You Can Leave Now";
+            //     else this.game.message = data.message;
+            // }
+            this.game.message = data.message;
+
+            this.game.player1.score = data.player1.score;
+            this.game.player2.score = data.player2.score;
+
+            if (this.game.player1.score == -1) {
+                this.game.player1.score = 0;
+                this.game.player2.score = 3;
             }
-            else if (data.winner == this.game.player) {
-                this.game.message = "You Won";
-                if (this.game.trnmt) this.game.message = "You Won, Wait For The Next Round :)";
+            else if (this.game.player2.score == -1) {
+                this.game.player1.score = 3;
+                this.game.player2.score = 0;
             }
-            else {
-                this.game.message = "You Lost";
-                if (this.game.trnmt) this.game.message = "You Lost, You Can Leave Now";
-            }
+            
             this.game.stateOfGame = "Game Over";
         }
         if ((data.type == 'waiting' || data.type == "tournament_created" || data.type == "tournament_joined")) {
@@ -1517,6 +1673,8 @@ class WebSocketManager {
                 this.game.Iam = "Red";
             this.game.player = data.player;
             this.game.trnmt = data.tournament;
+            this.game.username = data.username;
+            this.game.oppenentUserName = data.opp;
             // this.game.online = true;
         }
 
@@ -1718,7 +1876,7 @@ class WebSocketManager {
         modalContent.appendChild(closeButton);
     
         // Attach close event
-        closeButton.addEventListener('click', this.closeTournamentList);
+        closeButton.addEventListener('click', this.closeTournamentListAll);
     
         // Append modal to body
         document.body.appendChild(modal);
@@ -1729,7 +1887,15 @@ class WebSocketManager {
             }
         });
     }
-    
+
+    closeTournamentListAll() {
+        const modal = document.getElementById('tournamentModal');
+        if (modal) {
+            document.body.removeChild(modal);
+        }
+        cleanupPreviousMode();
+        toggleButtons(false);
+    }
 
     closeTournamentList() {
         const modal = document.getElementById('tournamentModal');
@@ -1741,7 +1907,8 @@ class WebSocketManager {
     joinTournament(tournamentId) {
         const message = {
             type: 'join_tournament',
-            tournament_id: tournamentId
+            tournament_id: tournamentId,
+            username: this.username
         };
         this.socket.send(JSON.stringify(message));
         console.log(`Joining tournament with ID: ${tournamentId}`);
@@ -1762,7 +1929,7 @@ class WebSocketManager {
         modal.style.justifyContent = 'center';
         modal.style.alignItems = 'center';
         modal.style.zIndex = '9999';
-
+    
         // Create the modal content
         const modalContent = document.createElement('div');
         modalContent.style.backgroundColor = 'white';
@@ -1770,7 +1937,7 @@ class WebSocketManager {
         modalContent.style.borderRadius = '10px';
         modalContent.style.textAlign = 'center';
         modal.appendChild(modalContent);
-
+    
         // Tournament name input
         const nameInput = document.createElement('input');
         nameInput.type = 'text';
@@ -1779,7 +1946,7 @@ class WebSocketManager {
         nameInput.style.padding = '10px';
         nameInput.style.width = '100%';
         modalContent.appendChild(nameInput);
-
+    
         // Number of players input
         const numPlayersInput = document.createElement('input');
         numPlayersInput.type = 'number';
@@ -1788,23 +1955,44 @@ class WebSocketManager {
         numPlayersInput.style.padding = '10px';
         numPlayersInput.style.width = '100%';
         modalContent.appendChild(numPlayersInput);
-
+    
+        // Button container for better layout
+        const buttonContainer = document.createElement('div');
+        buttonContainer.style.display = 'flex';
+        buttonContainer.style.justifyContent = 'space-between';
+        buttonContainer.style.marginTop = '10px';
+        modalContent.appendChild(buttonContainer);
+    
         // Submit button
         const submitButton = document.createElement('button');
         submitButton.textContent = 'Create Tournament';
         submitButton.style.padding = '10px 20px';
-        submitButton.style.marginTop = '10px';
         submitButton.style.cursor = 'pointer';
-        modalContent.appendChild(submitButton);
-
+        submitButton.style.backgroundColor = '#4CAF50';
+        submitButton.style.color = 'white';
+        submitButton.style.border = 'none';
+        submitButton.style.borderRadius = '5px';
+        buttonContainer.appendChild(submitButton);
+    
+        // Cancel button
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = 'Cancel';
+        cancelButton.style.padding = '10px 20px';
+        cancelButton.style.cursor = 'pointer';
+        cancelButton.style.backgroundColor = '#f44336';
+        cancelButton.style.color = 'white';
+        cancelButton.style.border = 'none';
+        cancelButton.style.borderRadius = '5px';
+        buttonContainer.appendChild(cancelButton);
+    
         // Append modal to body
         document.body.appendChild(modal);
-
+    
         // Submit button click handler
         submitButton.addEventListener('click', () => {
             const tournamentName = nameInput.value;
             const numPlayers = parseInt(numPlayersInput.value, 10);
-
+    
             if (tournamentName && numPlayers > 0) {
                 callback(tournamentName, numPlayers);
                 document.body.removeChild(modal); // Remove the modal
@@ -1812,7 +2000,1962 @@ class WebSocketManager {
                 alert('Please enter valid tournament details!');
             }
         });
+    
+        // Cancel button click handler
+        cancelButton.addEventListener('click', () => {
+            document.body.removeChild(modal); // Remove the modal
+            cleanupPreviousMode();
+            toggleButtons(false);
+        });
     }
 }
 
-export { Game , WebSocketManager};
+class GameChat {
+    constructor() {
+        this.currentUser = null;
+        this.activeSockets = {};
+        this.friendList = [];
+        
+        // DOM Elements
+        this.chatContainer = document.getElementById('chat-container');
+        this.chatHeader = document.getElementById('chat-header');
+        this.chatMinimize = document.getElementById('chat-minimize');
+        this.chatMessages = document.getElementById('chat-messages');
+        this.chatInput = document.getElementById('chat-message-input');
+        this.chatSendButton = document.getElementById('chat-send-button');
+        this.friendListContainer = document.getElementById('friend-list');
+        this.showFriendsBtn = document.getElementById('show-friends-btn');
+        this.chatTabsContainer = document.getElementById('chat-tabs');
+
+        this.setupEventListeners();
+    }
+
+    async login(username) {
+        try {
+            // Backend authentication
+            const response = await fetch('/api/user_data/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.getAuthToken()}`
+                },
+                // body: JSON.stringify({ username })
+            });
+            if (response.ok) {
+                this.currentUser = username;
+            }
+        } catch (error) {
+            console.error('Login failed:', error);
+        }
+    }
+
+    async fetchFriendList() {
+        try {
+            const response = await fetch('/api/friends', {
+                headers: {
+                    'Authorization': `Bearer ${this.getAuthToken()}`
+                }
+            });
+            
+            this.friendList = await response.json();
+            this.renderFriendList();
+        } catch (error) {
+            console.error('Failed to fetch friends:', error);
+        }
+    }
+
+    renderFriendList() {
+        this.friendListContainer.innerHTML = '';
+        this.friendList.forEach(friend => {
+            const friendItem = document.createElement('div');
+            friendItem.classList.add('friend-item');
+            friendItem.textContent = friend.username;
+            friendItem.addEventListener('click', () => this.openChatWithFriend(friend.username));
+            this.friendListContainer.appendChild(friendItem);
+        });
+    }
+
+    openChatWithFriend(friendUsername) {
+        // Close friend list
+        this.friendListContainer.classList.remove('visible');
+
+        // Create or focus existing chat tab
+        let chatTab = document.querySelector(`[data-username="${friendUsername}"]`);
+        if (!chatTab) {
+            this.createChatTab(friendUsername);
+        }
+
+        // Establish WebSocket connection
+        this.establishWebSocket(friendUsername);
+    }
+
+    createChatTab(friendUsername) {
+        const chatTab = document.createElement('div');
+        chatTab.classList.add('chat-tab');
+        chatTab.dataset.username = friendUsername;
+        chatTab.textContent = friendUsername;
+        this.chatTabsContainer.appendChild(chatTab);
+    }
+
+    establishWebSocket(friendUsername) {
+        // Close existing socket if exists
+        if (this.activeSockets[friendUsername]) {
+            this.activeSockets[friendUsername].close();
+        }
+
+        // Create new WebSocket
+        const socket = new WebSocket(`ws://localhost:8000/chat/${this.currentUser}/${friendUsername}`);
+
+        socket.onopen = () => {
+            console.log(`WebSocket opened with ${friendUsername}`);
+        };
+
+        socket.onmessage = (event) => {
+            this.displayMessage(friendUsername, event.data, false);
+        };
+
+        socket.onclose = () => {
+            delete this.activeSockets[friendUsername];
+        };
+
+        // Idle timeout
+        let idleTimeout = setTimeout(() => {
+            socket.close();
+        }, 10 * 60 * 1000); // 10 minutes
+
+        // Reset idle timeout on activity
+        socket.addEventListener('message', () => {
+            clearTimeout(idleTimeout);
+            idleTimeout = setTimeout(() => {
+                socket.close();
+            }, 10 * 60 * 1000);
+        });
+
+        this.activeSockets[friendUsername] = socket;
+    }
+
+    sendMessage(friendUsername, message) {
+        const socket = this.activeSockets[friendUsername];
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify({
+                from: this.currentUser,
+                to: friendUsername,
+                message: message
+            }));
+            this.displayMessage(friendUsername, message, true);
+        }
+    }
+
+    displayMessage(friendUsername, message, isSent = false) {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('chat-message');
+        messageElement.classList.add(isSent ? 'sent' : 'received');
+        messageElement.textContent = message;
+        
+        // Find or create chat tab for this friend
+        let chatTab = document.querySelector(`[data-username="${friendUsername}"]`);
+        if (!chatTab) {
+            this.createChatTab(friendUsername);
+        }
+
+        this.chatMessages.appendChild(messageElement);
+        this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+    }
+
+    setupEventListeners() {
+        // Add direct username chat input
+        const usernameInput = document.createElement('input');
+        usernameInput.id = 'direct-username-input';
+        usernameInput.type = 'text';
+        usernameInput.placeholder = 'Enter username';
+        
+        const startChatButton = document.createElement('button');
+        startChatButton.textContent = 'Start Chat';
+        startChatButton.addEventListener('click', () => {
+            const username = usernameInput.value.trim();
+            if (username) {
+                this.openChatWithFriend(username);
+                usernameInput.value = '';
+            }
+        });
+
+        // Insert these elements near the chat input
+        const chatInputContainer = document.getElementById('chat-input');
+        chatInputContainer.insertBefore(startChatButton, chatInputContainer.firstChild);
+        chatInputContainer.insertBefore(usernameInput, chatInputContainer.firstChild);
+
+        // Existing event listeners...
+        // this.chatHeader.addEventListener('click', this.toggleChat.bind(this));
+        this.chatSendButton.addEventListener('click', this.handleSendMessage.bind(this));
+        
+        // Friends list toggle listener
+        // this.showFriendsBtn.addEventListener('click', () => {
+        //     this.friendListContainer.classList.toggle('visible');
+        // });
+    }
+
+    handleSendMessage() {
+        const message = this.chatInput.value.trim();
+        const activeTab = document.querySelector('.chat-tab.active');
+        
+        if (message && activeTab) {
+            const friendUsername = activeTab.dataset.username;
+            this.sendMessage(friendUsername, message);
+            this.chatInput.value = '';
+        }
+    }
+
+    toggleChat() {
+        this.chatContainer.classList.toggle('minimized');
+        this.chatContainer.classList.toggle('expanded');
+        this.chatMinimize.textContent = this.chatContainer.classList.contains('minimized') ? '+' : '-';
+    }
+
+    getAuthToken() {
+        // Implement token retrieval logic
+        const access_token = this.getCookie('access_token');
+        console.log('1-Access Token:', access_token);
+        return access_token;
+    }
+
+    getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) {
+            const cookieValue = parts.pop().split(";").shift();
+            return cookieValue;
+        }
+        return null;
+    }
+}
+
+// chat-manager.js
+export class ChatManager {
+    constructor() {
+        console.log('Initializing ChatManager');
+        this.initialized = false;
+        this.currentUser = null;
+        this.activeChats = new Map();
+        this.friends = new Set();
+        this.initializeElements();
+        this.attachEventListeners();
+    }
+
+    initializeElements() {
+        // Cache DOM elements
+        this.elements = {
+            container: document.getElementById('chat-container'),
+            header: document.getElementById('chat-header'),
+            minimize: document.getElementById('chat-minimize'),
+            messages: document.getElementById('chat-messages'),
+            input: document.getElementById('chat-message-input'),
+            sendButton: document.getElementById('chat-send-button'),
+            usernameInput: document.getElementById('direct-username-input'),
+            startChatBtn: document.getElementById('start-direct-chat-btn'),
+            friendsList: document.getElementById('friend-list'),
+            showFriendsBtn: document.getElementById('show-friends-btn'),
+            closeFriendsBtn: document.getElementById('close-friends-list'),
+            chatTabs: document.getElementById('chat-tabs'),
+            connectionStatus: document.getElementById('connection-status')
+        };
+    }
+
+    attachEventListeners() {
+        console.log('Attaching event listeners');
+        // Minimize/Maximize chat
+        this.elements.minimize.addEventListener('click', () => this.toggleChat());
+        
+        // Show/Hide friends list
+        this.elements.showFriendsBtn.addEventListener('click', () => this.toggleFriendsList());
+        this.elements.closeFriendsBtn.addEventListener('click', () => this.toggleFriendsList());
+        
+        // Message sending
+        // this.elements.sendButton.addEventListener('click', () => this.sendMessage());
+        // this.elements.input.addEventListener('keypress', (e) => {
+        //     if (e.key === 'Enter') this.sendMessage();
+        // });
+        
+        // Start new chat
+        this.elements.startChatBtn.addEventListener('click', () => this.startNewChat());
+        this.elements.usernameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.startNewChat();
+        });
+    }
+
+    login(username) {
+        this.currentUser = username;
+        this.elements.connectionStatus.className = 'status-online';
+        this.addSystemMessage(`Logged in as ${username}`);
+        // Here you would typically connect to your chat server
+    }
+
+    toggleChat() {
+        console.log('Toggling chat');
+        const isMinimized = this.elements.container.classList.toggle('minimized');
+        this.elements.minimize.textContent = isMinimized ? '+' : '-';
+    }
+
+    toggleFriendsList() {
+        this.elements.friendsList.classList.toggle('hidden');
+    }
+
+    startNewChat() {
+        const username = this.elements.usernameInput.value.trim();
+        if (!username) return;
+        
+        if (!this.activeChats.has(username)) {
+            this.createNewChatTab(username);
+            this.elements.usernameInput.value = '';
+        }
+        
+        this.activateChat(username);
+    }
+
+    createNewChatTab(username) {
+        const tab = document.createElement('div');
+        tab.className = 'chat-tab';
+        tab.dataset.username = username;
+        tab.innerHTML = `
+            <span class="tab-name">${username}</span>
+            <button class="close-tab">×</button>
+        `;
+        
+        tab.querySelector('.close-tab').addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.closeChat(username);
+        });
+        
+        tab.addEventListener('click', () => this.activateChat(username));
+        
+        this.elements.chatTabs.appendChild(tab);
+        this.activeChats.set(username, {
+            messages: [],
+            tab: tab
+        });
+    }
+
+    activateChat(username) {
+        // Remove active class from all tabs
+        this.elements.chatTabs.querySelectorAll('.chat-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        
+        // Activate the selected tab
+        const chatData = this.activeChats.get(username);
+        if (chatData) {
+            chatData.tab.classList.add('active');
+            this.displayMessages(username);
+        }
+    }
+
+    closeChat(username) {
+        const chatData = this.activeChats.get(username);
+        if (chatData) {
+            chatData.tab.remove();
+            this.activeChats.delete(username);
+            
+            // Activate another chat if available
+            const nextChat = this.activeChats.keys().next().value;
+            if (nextChat) {
+                this.activateChat(nextChat);
+            } else {
+                this.elements.messages.innerHTML = '';
+            }
+        }
+    }
+
+    sendMessage() {
+        const message = this.elements.input.value.trim();
+        if (!message) return;
+
+        const activeTab = this.elements.chatTabs.querySelector('.chat-tab.active');
+        if (!activeTab) {
+            this.addSystemMessage('Please select a chat first');
+            return;
+        }
+
+        const recipient = activeTab.dataset.username;
+        this.addMessage(recipient, message, true);
+        this.elements.input.value = '';
+        
+        // Here you would typically send the message to your chat server
+        // For demo purposes, we'll simulate a response
+        setTimeout(() => {
+            this.addMessage(recipient, `Echo: ${message}`, false);
+        }, 1000);
+    }
+
+    addMessage(username, content, isSent) {
+        const chatData = this.activeChats.get(username);
+        if (!chatData) return;
+
+        const message = {
+            content,
+            timestamp: new Date(),
+            isSent
+        };
+
+        chatData.messages.push(message);
+        
+        if (this.elements.chatTabs.querySelector('.chat-tab.active')?.dataset.username === username) {
+            this.displayMessage(message);
+        }
+    }
+
+    addSystemMessage(content) {
+        const messageElement = document.createElement('div');
+        messageElement.className = 'chat-message system';
+        messageElement.textContent = content;
+        this.elements.messages.appendChild(messageElement);
+        this.elements.messages.scrollTop = this.elements.messages.scrollHeight;
+    }
+
+    displayMessage(message) {
+        const messageElement = document.createElement('div');
+        messageElement.className = `chat-message ${message.isSent ? 'sent' : 'received'}`;
+        messageElement.textContent = message.content;
+        this.elements.messages.appendChild(messageElement);
+        this.elements.messages.scrollTop = this.elements.messages.scrollHeight;
+    }
+
+    displayMessages(username) {
+        const chatData = this.activeChats.get(username);
+        if (!chatData) return;
+
+        this.elements.messages.innerHTML = '';
+        chatData.messages.forEach(message => this.displayMessage(message));
+    }
+}
+
+import { getCookie } from "../../js/rendringData.js";
+import { setUsername } from "../../js/main.js";
+
+export async function check_expiration (route) {
+    const access_token = getCookie('access_token');
+    const response = await fetch('http://localhost:8000/api/user_data/', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${access_token}`,
+            'Content-Type': 'application/json',
+        },
+    });
+    if(response.ok){
+        const responseData = await response.json();
+
+        setUsername(responseData.login);
+        combinedChat.login(username);
+        return true;
+    }
+    else {
+        console.error('Failed to fetch data, user not logged in anymore');
+        // first checking if token expired 
+        // if (route != '/login' && route != '/signup' ) {
+        const refresh_token = getCookie('refresh_token');
+        console.log ("1-refresh_token = ", refresh_token);
+        if (refresh_token) {
+            console.log ("2-refresh_token = ", refresh_token);
+
+            const refreshResponse = await fetch("http://localhost:8000/api/token_refresh/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ refresh: refresh_token }),
+            });
+    
+            if (refreshResponse.ok) {
+                const data = await refreshResponse.json();
+                document.cookie = `access_token=${data.access}; path=/; Secure`;
+                document.cookie = `refresh_token=${data.refresh}; path=/; Secure`;
+                const response = await fetch('http://localhost:8000/api/user_data/', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${data.access}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                if(response.ok){
+                    const responseData = await response.json();
+            
+                    setUsername(responseData.login);
+                    combinedChat.login(username);
+                    return true;
+                }
+                else {
+                    cleanupPreviousMode ();
+                    throw new Error("need to log in or sign up first");
+                }
+            }
+            else {
+                cleanupPreviousMode ();
+                throw new Error("need to log in or sign up first");
+            }
+        }
+        else {
+            cleanupPreviousMode ();
+            throw new Error("need to log in or sign up first");
+            console.error ("no valid")
+        }
+        // }
+        return false;
+    }
+}
+
+
+export function toggleButtons(play) {
+    const modeButtons = document.getElementById('mode-selection');
+    const tournamentControls = document.getElementById('tournament-controls');
+    const closeButton = document.getElementById('close-button');
+    
+    if (!playing && !play) {
+        // redirect to dashboard
+        handling_navigation('/dashboard');
+    } else if (play) {
+        modeButtons.style.display = 'none';
+        tournamentControls.style.display = 'none';
+        closeButton.style.display = 'block';
+        playing = true;
+    } else if (!play && playing) {
+        modeButtons.style.display = 'flex';
+        tournamentControls.style.display = 'flex';
+        closeButton.style.display = 'block';
+        playing = false;
+    }
+}
+
+export async function startGame(mode, online, friend) {
+    try {
+        await check_expiration('/ping');
+    }
+    catch (error) {
+        console.error('Failed to fetch data, user not logged in anymore');
+        cleanupPreviousMode ();
+        return (handling_navigation('/login'));
+    }
+
+    console.log("Starting game: ", mode, "for user: ", username);
+    cleanupPreviousMode();
+    
+    const gameContainer = document.getElementById('game-container');
+    const newCanvas = document.createElement('div');
+    newCanvas.id = 'gameCanvas';
+    gameContainer.appendChild(newCanvas);
+    
+    const wsUrl = "ws://localhost:8000/ws/pong/";
+    currentGame = new Game();
+    currentGame.online = online;
+    currentWebSocket = new WebSocketManager(wsUrl, currentGame, mode, username, friend);
+    
+    currentGame.animate();
+    
+    toggleButtons(true);
+    console.log("Game started");
+}
+
+// combined-chat-manager.js
+export class CombinedChatManager {
+    constructor() {
+        this.initialized = false;
+        this.currentUser = null;
+        this.activeChats = new Map();
+        this.activeSockets = {};
+        this.friends = new Set();
+        this.activeTab = null;
+        this.initializeElements();
+        this.attachEventListeners();
+    }
+
+    initializeElements() {
+        this.elements = {
+            container: document.getElementById('chat-container'),
+            header: document.getElementById('chat-header'),
+            minimize: document.getElementById('chat-minimize'),
+            messages: document.getElementById('chat-messages'),
+            input: document.getElementById('chat-message-input'),
+            sendButton: document.getElementById('chat-send-button'),
+            usernameInput: document.getElementById('direct-username-input'),
+            startChatBtn: document.getElementById('start-direct-chat-btn'),
+            friendsList: document.getElementById('friend-list'),
+            showFriendsBtn: document.getElementById('show-friends-btn'),
+            closeFriendsBtn: document.getElementById('close-friends-list'),
+            chatTabs: document.getElementById('chat-tabs'),
+            connectionStatus: document.getElementById('connection-status'),
+            gameInvite: document.getElementById('invite-to-game')
+        };
+    }
+
+    attachEventListeners() {
+        // UI Controls
+        // this.elements.header.addEventListener('click', () => this.toggleMaximize());
+        document.querySelector('.maximize-btn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.getElementById('chat-container').classList.remove('minimized');
+          });
+        this.elements.minimize.addEventListener('click', () => this.toggleChat());
+        this.elements.showFriendsBtn.addEventListener('click', () => this.toggleFriendsList());
+        this.elements.closeFriendsBtn.addEventListener('click', () => this.toggleFriendsList());
+        
+        // Chat Controls
+        this.elements.sendButton.addEventListener('click', () => this.handleSendMessage());
+        this.elements.input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.handleSendMessage();
+        });
+        
+        // New Chat
+        this.elements.startChatBtn.addEventListener('click', () => this.startNewChat());
+        this.elements.usernameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.startNewChat();
+        });
+
+        this.elements.gameInvite.addEventListener('click', () => this.sendGameInvite());
+
+        // clicking on chat tabs to actiavate chat
+        // this.elements.chatTabs.addEventListener('click', (e) => {
+        //     if (e.target.classList.contains('chat-tab')) {
+        //         console.log('Tab clicked:', e.target.dataset.username);
+        //         this.activateChat(e.target.dataset.username);
+        //     }
+        // });
+    }
+
+    async login(username) {
+        try {
+            const response = await fetch('/api/user_data/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.getAuthToken()}`
+                }
+            });
+
+            if (response.ok) {
+                this.currentUser = username;
+                this.elements.connectionStatus.className = 'status-online';
+                this.addSystemMessage(`Logged in as ${username}`);
+                console.log('Login successful:', username);
+                // await this.fetchFriendList();
+                this.establishStandByWebSocket();
+            }
+        } catch (error) {
+            console.error('Login failed:', error);
+            this.addSystemMessage('Login failed. Please try again.');
+        }
+    }
+
+    async fetchFriendList() {
+        try {
+            const response = await fetch('/api/friends', {
+                headers: {
+                    'Authorization': `Bearer ${this.getAuthToken()}`
+                }
+            });
+            
+            const friends = await response.json();
+            this.friends = new Set(friends.map(f => f.username));
+            this.renderFriendList();
+        } catch (error) {
+            console.error('Failed to fetch friends:', error);
+        }
+    }
+
+    renderFriendList() {
+        this.elements.friendsList.innerHTML = '';
+        this.friends.forEach(username => {
+            const friendItem = document.createElement('div');
+            friendItem.classList.add('friend-item');
+            friendItem.textContent = username;
+            friendItem.addEventListener('click', () => this.startNewChat(username));
+            this.elements.friendsList.appendChild(friendItem);
+        });
+    }
+
+    startNewChat(username = null) {
+        const chatUsername = username || this.elements.usernameInput.value.trim();
+        if (!chatUsername) return;
+
+        // send a request to chat to the other user
+        const message = {
+            type: 'request',
+            from: this.currentUser,
+            to: chatUsername
+        };
+        this.activeSockets[this.currentUser].send(JSON.stringify(message));
+        
+        // if (!this.activeChats.has(chatUsername)) {
+        //     this.createNewChatTab(chatUsername);
+        //     this.elements.usernameInput.value = '';
+        //     // this.establishWebSocket(chatUsername);
+        // }
+        
+        // this.activateChat(chatUsername);
+        this.elements.friendsList.classList.add('hidden');
+    }
+
+    createNewChatTab(username) {
+
+        // Check if tab already exists
+        if (this.activeChats.has(username)) {
+            this.activateChat(username);
+            return;
+        }
+
+        const tab = document.createElement('div');
+        tab.className = 'chat-tab';
+        tab.dataset.username = username;
+        tab.innerHTML = `
+            <span class="tab-name">${username}</span>
+            <button class="close-tab">×</button>
+        `;
+        
+        tab.querySelector('.close-tab').addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.closeChat(username);
+        });
+        
+        tab.addEventListener('click', () => this.activateChat(username));
+        
+        this.elements.chatTabs.appendChild(tab);
+        this.activeChats.set(username, {
+            messages: [],
+            tab: tab,
+            active: false
+        });
+    }
+
+    establishStandByWebSocket() {
+        console.log('Establishing standby WebSocket connection');
+        const socket = new WebSocket(`ws://localhost:8000/chat/`);
+        
+        socket.onopen = () => {
+            socket.send(JSON.stringify({
+                type: 'standby',
+                username: this.currentUser
+            }));
+            console.log('Standby WebSocket opened');
+        };
+    
+        socket.onmessage = async (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                console.log('Standby socket received:', data);
+    
+                if (data.type === 'request') {
+                    // Create notification element
+                    const notificationId = `chat-request-${Date.now()}`;
+                    const notification = document.createElement('div');
+                    notification.className = 'chat-request-notification';
+                    notification.id = notificationId;
+                    notification.innerHTML = `
+                        <div class="notification-content">
+                            <p>Chat request from ${data.from}</p>
+                            <div class="notification-buttons">
+                                <button class="accept-btn">Accept</button>
+                                <button class="decline-btn">Decline</button>
+                            </div>
+                            <div class="notification-timer">30</div>
+                        </div>
+                    `;
+    
+                    document.body.appendChild(notification);
+    
+                    // Set up timeout for auto-decline
+                    let timeLeft = 30;
+                    const timerElement = notification.querySelector('.notification-timer');
+                    const timerInterval = setInterval(() => {
+                        timeLeft--;
+                        timerElement.textContent = timeLeft;
+                        if (timeLeft <= 0) {
+                            handleDecline();
+                        }
+                    }, 1000);
+    
+                    // Handle accept
+                    const handleAccept = () => {
+                        clearInterval(timerInterval);
+                        notification.remove();
+                        
+                        // Send acceptance
+                        socket.send(JSON.stringify({
+                            type: 'response',
+                            from: this.currentUser,
+                            to: data.from,
+                            accepted: true
+                        }));
+    
+                        // Create new chat UI
+                        this.createNewChatTab(data.from);
+                        this.activateChat(data.from);
+                    };
+    
+                    // Handle decline
+                    const handleDecline = () => {
+                        clearInterval(timerInterval);
+                        notification.remove();
+                        
+                        // Send declination
+                        socket.send(JSON.stringify({
+                            type: 'response',
+                            from: this.currentUser,
+                            to: data.from,
+                            accepted: false
+                        }));
+                    };
+    
+                    // Add button event listeners
+                    notification.querySelector('.accept-btn').addEventListener('click', handleAccept);
+                    notification.querySelector('.decline-btn').addEventListener('click', handleDecline);
+    
+                    // Auto-remove after 30 seconds
+                    setTimeout(() => {
+                        if (document.getElementById(notificationId)) {
+                            handleDecline();
+                        }
+                    }, 30000);
+                }
+                else if (data.type === 'previous_messages') {
+                    this.loadPreviousMessages(data.from || this.activeTab, data.messages);
+                }
+                // Handle chat messages if this socket is being used for an active chat
+                else if (data.type === 'message') {
+                    const fromUser = data.from;
+                    if (this.activeChats.has(fromUser)) {
+                        this.addMessage(fromUser, data.message, false);
+                    }
+                }
+                // Handle chat request responses
+                else if (data.type === 'response') {
+                    if (data.accepted) {
+                        this.addSystemMessage(`${data.from} accepted your chat request`);
+                        this.createNewChatTab(data.from);
+                        this.activateChat(data.from);
+                        // send to the backend to add it to connections
+                        socket.send(JSON.stringify({
+                            type: 'acceptedChat',
+                            by: data.from,
+                            to: this.currentUser
+                        }));
+                    } else {
+                        this.addSystemMessage(`${data.from} declined your chat request`);
+                    }
+                }
+
+                else if (data.type === 'close') {
+                    console.log(`${data.from} has closed the chat`);
+                    // this.closeChat(data.from);
+                    this.activeChats.delete(data.from);
+                    this.addSystemMessage(`${data.from} has closed the chat`);
+                }
+                else if (data.type === 'game_invite') {
+                    console.log('Game invite received from', data.from);
+                    this.addSystemMessage(`Game invite received from ${data.from}`);
+                    const notificationId = `game-invite-${Date.now()}`;
+                    const notification = document.createElement('div');
+                    notification.className = 'chat-request-notification';
+                    notification.id = notificationId;
+                    notification.innerHTML = `
+                        <div class="notification-content">
+                            <p>Game invite from ${data.from}</p>
+                            <div class="notification-buttons">
+                                <button class="accept-btn">Accept</button>
+                                <button class="decline-btn">Decline</button>
+                            </div>
+                            <div class="notification-timer">30</div>
+                        </div>
+                    `;
+    
+                    document.body.appendChild(notification);
+    
+                    // Set up timeout for auto-decline
+                    let timeLeft = 30;
+                    const timerElement = notification.querySelector('.notification-timer');
+                    const timerInterval = setInterval(() => {
+                        timeLeft--;
+                        timerElement.textContent = timeLeft;
+                        if (timeLeft <= 0) {
+                            handleDecline();
+                        }
+                    }, 1000);
+    
+                    // Handle accept
+                    const handleAccept = async () => {
+                        clearInterval(timerInterval);
+                        notification.remove();
+                        
+                        // Send acceptance
+                        socket.send(JSON.stringify({
+                            type: 'game_response',
+                            from: this.currentUser,
+                            to: data.from,
+                            accepted: true
+                        }));
+
+                        // Create new chat UI
+                        // this.createNewChatTab(data.from);
+                        // this.activateChat(data.from);
+                        // startthe game
+                        
+                        handling_navigation('/ping');
+                        await startGame('OnlineMultiplayerOpenent', true, data.from);
+                    };
+    
+                    // Handle decline
+                    const handleDecline = () => {
+                        clearInterval(timerInterval);
+                        notification.remove();
+                        
+                        // Send declination
+                        socket.send(JSON.stringify({
+                            type: 'game_response',
+                            from: this.currentUser,
+                            to: data.from,
+                            accepted: false
+                        }));
+                    };
+    
+                    // Add button event listeners
+                    notification.querySelector('.accept-btn').addEventListener('click', handleAccept);
+                    notification.querySelector('.decline-btn').addEventListener('click', handleDecline);
+    
+                    // Auto-remove after 30 seconds
+                    setTimeout(() => {
+                        if (document.getElementById(notificationId)) {
+                            handleDecline();
+                        }
+                    }, 30000);
+                }
+
+                else if (data.type === 'game_response') {
+                    if (data.accepted) {
+                        this.addSystemMessage(`${data.from} accepted your game invite`);
+                        // start the game
+                        handling_navigation('/ping');
+                        await startGame('OnlineMultiplayerOpenent', true, data.from);
+                    } else {
+                        this.addSystemMessage(`${data.from} declined your game invite`);
+                    }
+                }
+
+                else if (data.type === 'error') {
+                    console.error('Error:', data.message);
+                    this.addSystemMessage(data.message);
+                }
+            } catch (error) {
+                console.error('Error processing message:', error);
+            }
+        };
+    
+        socket.onclose = () => {
+            console.log('Standby WebSocket closed');
+            // Attempt to reconnect after a brief delay
+            setTimeout(() => this.establishStandByWebSocket(), 3000);
+        };
+    
+        socket.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
+    
+        // this.activeSockets.standby = socket;
+        this.activeSockets[this.currentUser] = socket;
+    }
+
+    // establishWebSocket(friendUsername) {
+    //     if (this.activeSockets[friendUsername]) {
+    //         this.activeSockets[friendUsername].close();
+    //     }
+
+    //     console.log(`Establishing WebSocket connection with ${friendUsername} from ${this.currentUser}`);
+
+    //     const socket = new WebSocket(`ws://localhost:8000/chat/`);
+
+        
+    //     socket.onopen = () => {
+    //         socket.send(JSON.stringify({
+    //             type: 'init',
+    //             from: this.currentUser,
+    //             to: friendUsername
+    //         }));
+    //         console.log(`WebSocket opened with ${friendUsername}`);
+    //         this.addSystemMessage(`Connected to chat with ${friendUsername}`);
+    //     };
+
+    //     socket.onmessage = (event) => {
+    //         try {
+    //             const data = JSON.parse(event.data);
+    //             console.log(data);
+    //             // Only process messages intended for this chat
+    //             if (data.from === friendUsername || data.to === friendUsername) {
+    //                 this.addMessage(friendUsername, data.message, data.from === this.currentUser);
+    //             }
+    //         } catch (error) {
+    //             console.error('Error processing message:', error);
+    //         }
+    //     };
+
+    //     socket.onclose = () => {
+    //         console.log(`WebSocket closed with ${friendUsername}`);
+    //         delete this.activeSockets[friendUsername];
+    //         this.addSystemMessage(`Disconnected from chat with ${friendUsername}`);
+    //     };
+
+    //     socket.onerror = (error) => {
+    //         console.error('WebSocket error:', error);
+    //         this.addSystemMessage('Connection error. Please try again.');
+    //     };
+
+    //     // Idle timeout handling
+    //     let idleTimeout = setTimeout(() => socket.close(), 10 * 60 * 1000);
+    //     socket.addEventListener('message', () => {
+    //         clearTimeout(idleTimeout);
+    //         idleTimeout = setTimeout(() => socket.close(), 10 * 60 * 1000);
+    //     });
+
+    //     this.activeSockets[friendUsername] = socket;
+    // }
+
+    sendGameInvite() {
+        const activeTab = this.elements.chatTabs.querySelector('.chat-tab.active');
+        if (!activeTab) {
+            this.addSystemMessage('Please select a chat first');
+            return;
+        }
+
+        const recipient = activeTab.dataset.username;
+        const message = {
+            type: 'game_invite',
+            from: this.currentUser,
+            to: recipient
+        };
+        this.activeSockets[this.currentUser].send(JSON.stringify(message));
+        this.addSystemMessage(`Game invite sent to ${recipient}`);
+    }
+
+    handleSendMessage() {
+        const message = this.elements.input.value.trim();
+        if (!message) return;
+
+        const activeTab = this.elements.chatTabs.querySelector('.chat-tab.active');
+        if (!activeTab) {
+            this.addSystemMessage('Please select a chat first');
+            return;
+        }
+        console.log('Chat not initialized. Requesting chat...',activeTab.dataset.username, this.activeChats.has(activeTab.dataset.username));
+
+        if (!this.activeChats.has(activeTab.dataset.username)) {
+            this.addSystemMessage('Chat not initialized. Please Request a chat first');            
+
+            // const button = this.elements.messages.querySelector('.request-chat-button');
+            // Check if the button already exists in the chat area
+            // if (!this.elements.messages.querySelector('.request-chat-button')) {
+                console.log('Creating request chat button');
+                // Create the "Request Chat" button
+                const requestButton = document.createElement('button');
+                requestButton.className = 'request-chat-button';
+                requestButton.textContent = 'Request Chat';
+                requestButton.style.padding = '10px 20px';
+                requestButton.style.marginTop = '10px';
+                requestButton.style.border = '1px solid #ccc';
+                requestButton.style.borderRadius = '5px';
+                requestButton.style.cursor = 'pointer';
+                requestButton.style.background = '#f0f0f0';
+                requestButton.style.display = 'block'; // Ensure it appears as a block-level element
+
+
+                // Add click event listener to the button
+                requestButton.addEventListener('click', () => {
+                    console.log('Requesting chat with', activeTab.dataset.username);
+                    const message = {
+                        type: 'request',
+                        from: this.currentUser,
+                        to: activeTab.dataset.username
+                    };
+                    this.activeSockets[this.currentUser].send(JSON.stringify(message));
+                    this.addSystemMessage(`Chat request sent to ${activeTab.dataset.username}`);
+                    requestButton.disabled = true; // Disable the button after the request
+                    requestButton.textContent = 'Request Sent';
+                    requestButton.style.background = '#d3d3d3';
+                    requestButton.style.cursor = 'default';
+                });
+
+                // Add the button as a system message
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'chat-message system';
+                buttonContainer.appendChild(requestButton);
+                this.elements.messages.appendChild(buttonContainer);
+
+                // Scroll to the bottom of the chat area
+                this.elements.messages.scrollTop = this.elements.messages.scrollHeight;
+            // }
+
+            return;
+        }
+
+        const recipient = activeTab.dataset.username;
+        this.sendMessage(recipient, message);
+        this.elements.input.value = '';
+    }
+
+    sendMessage(friendUsername, message) {
+        const socket = this.activeSockets[this.currentUser];
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify({
+                type: 'message',
+                from: this.currentUser,
+                to: friendUsername,
+                message: message
+            }));
+            this.addMessage(friendUsername, message, true);
+        } else {
+            this.addSystemMessage('Connection lost. Attempting to reconnect...');
+            // this.establishWebSocket(friendUsername);
+        }
+    }
+
+    activateChat(username) {
+        if (!this.activeChats.has(username)) return;
+
+        // Deactivate current active tab
+        if (this.activeTab) {
+            const currentActiveChat = this.activeChats.get(this.activeTab);
+            if (currentActiveChat) {
+                currentActiveChat.tab.classList.remove('active');
+                currentActiveChat.active = false;
+            }
+        }
+
+        // Activate new tab
+        const chat = this.activeChats.get(username);
+        chat.tab.classList.add('active');
+        chat.active = true;
+        this.activeTab = username;
+
+        // Clear and display messages for this chat
+        this.elements.messages.innerHTML = '';
+        chat.messages.forEach(msg => {
+            this.displayMessage(msg.sender, msg.message, msg.timestamp);
+        });
+    }
+
+    // closeChat(username) {
+    //     // if (this.activeSockets[username]) {
+    //     //     this.activeSockets[username].close();
+    //     //     delete this.activeSockets[username];
+    //     // }
+
+    //     const chatData = this.activeChats.get(username);
+    //     if (chatData) {
+    //         chatData.tab.remove();
+    //         console.log('Closing chat with', username);
+    //         this.activeChats.delete(username);
+            
+    //         const nextChat = this.activeChats.keys().next().value;
+    //         if (nextChat) {
+    //             this.activateChat(nextChat);
+    //         } else {
+    //             this.elements.messages.innerHTML = '';
+    //         }
+
+    //         // send a close notification for the other user
+    //         const message = {
+    //             type: 'close',
+    //             from: this.currentUser,
+    //             to: username
+    //         };
+    //         console.log('Sending close message:', message);
+    //         this.activeSockets[this.currentUser].send(JSON.stringify(message));
+    //     }
+    // }
+
+    closeChat(username) {
+        if (!this.activeChats.has(username)) return;
+
+        // Send close message to websocket
+        const socket = this.activeSockets[this.currentUser];
+        if (socket) {
+            socket.send(JSON.stringify({
+                type: 'close',
+                from: this.currentUser,
+                to: username
+            }));
+        }
+
+        // Remove tab and chat data
+        const chat = this.activeChats.get(username);
+        chat.tab.remove();
+        this.activeChats.delete(username);
+
+        // If this was the active tab, clear messages
+        if (this.activeTab === username) {
+            this.elements.messages.innerHTML = '';
+            this.activeTab = null;
+
+            // Activate another tab if available
+            const nextChat = this.activeChats.keys().next().value;
+            if (nextChat) {
+                this.activateChat(nextChat);
+            }
+        }
+    }
+
+    // addMessage(username, content, isSent) {
+    //     const chatData = this.activeChats.get(username);
+    //     if (!chatData) return;
+
+    //     const message = {
+    //         content,
+    //         timestamp: new Date(),
+    //         isSent
+    //     };
+
+    //     chatData.messages.push(message);
+        
+    //     if (this.elements.chatTabs.querySelector('.chat-tab.active')?.dataset.username === username) {
+    //         this.displayMessage(message);
+    //     }
+    // }
+
+    addMessage(username, message, isSent = false, timestamp = null) {
+        if (!this.activeChats.has(username)) {
+            this.createNewChatTab(username);
+        }
+
+        const chat = this.activeChats.get(username);
+        const messageObj = {
+            sender: isSent ? this.currentUser : username,
+            message: message,
+            timestamp: timestamp || new Date().toISOString()
+        };
+        
+        chat.messages.push(messageObj);
+
+        // If this is the active chat, display the message
+        if (this.activeTab === username) {
+            this.displayMessage(messageObj.sender, message, messageObj.timestamp);
+        } else {
+            // Add unread indicator to tab
+            chat.tab.classList.add('unread');
+        }
+    }
+
+    loadPreviousMessages(username, messages) {
+        if (!this.activeChats.has(username)) {
+            this.createNewChatTab(username);
+        }
+
+        const chat = this.activeChats.get(username);
+        chat.messages = messages.map(msg => ({
+            sender: msg.sender,
+            message: msg.message,
+            timestamp: msg.timestamp
+        }));
+
+        // If this is the active chat, display the messages
+        if (this.activeTab === username) {
+            this.elements.messages.innerHTML = '';
+            chat.messages.forEach(msg => {
+                this.displayMessage(msg.sender, msg.message, msg.timestamp);
+            });
+        }
+    }
+
+    addSystemMessage(content) {
+        const messageElement = document.createElement('div');
+        messageElement.className = 'chat-message system';
+        messageElement.textContent = content;
+        this.elements.messages.appendChild(messageElement);
+        this.elements.messages.scrollTop = this.elements.messages.scrollHeight;
+    }
+
+    // displayMessage(message) {
+    //     const messageElement = document.createElement('div');
+    //     messageElement.className = `chat-message ${message.isSent ? 'sent' : 'received'}`;
+    //     messageElement.textContent = message.content;
+    //     this.elements.messages.appendChild(messageElement);
+    //     this.elements.messages.scrollTop = this.elements.messages.scrollHeight;
+    // }
+    displayMessage(sender, message, timestamp = null) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${sender === this.currentUser ? 'sent' : 'received'}`;
+        
+        const time = timestamp ? new Date(timestamp) : new Date();
+        const timeStr = time.toLocaleTimeString();
+        
+        messageDiv.innerHTML = `
+            <div class="message-content">
+                <span class="message-sender">${sender}</span>
+                <p>${message}</p>
+                <span class="message-time">${timeStr}</span>
+            </div>
+        `;
+        
+        this.elements.messages.appendChild(messageDiv);
+        this.elements.messages.scrollTop = this.elements.messages.scrollHeight;
+    }
+
+    displayMessages(username) {
+        const chatData = this.activeChats.get(username);
+        if (!chatData) return;
+        this.elements.messages.innerHTML = '';
+        chatData.messages.forEach(message => this.displayMessage(message));
+    }
+
+    toggleChat() {
+        const isMinimized = this.elements.container.classList.toggle('minimized');
+        // this.elements.minimize.textContent = isMinimized ? '+' : '-';
+    }
+
+    // toggleMaximize() {
+    //     if (this.elements.container.classList.contains('minimized')) {
+    //         this.elements.container.classList.remove('minimized');
+    //         this.elements.minimize.textContent = '-';
+    //     }
+    // }
+
+    toggleFriendsList() {
+        this.elements.friendsList.classList.toggle('hidden');
+    }
+
+    getAuthToken() {
+        const access_token = this.getCookie('access_token');
+        return access_token;
+    }
+
+    getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) {
+            return parts.pop().split(";").shift();
+        }
+        return null;
+    }
+}
+
+///////////////////////////////////////
+
+class WebSocketEstablisher {
+    constructor() {
+        // Store active connections
+        this.connections = new Map();
+        // Queue for pending messages while connection is being established
+        this.messageQueue = new Map();
+        // Store WebSocket server URL
+        this.wsServerUrl = 'ws://localhost:8000/chat/';
+        // Initialize the main WebSocket connection for receiving new chat requests
+        this.initializeMainSocket();
+    }
+
+    initializeMainSocket() {
+        // Create main WebSocket connection to listen for new chat requests
+        this.mainSocket = new WebSocket(this.wsServerUrl);
+        
+        this.mainSocket.onopen = () => {
+            console.log('Main WebSocket connection established');
+        };
+
+        this.mainSocket.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                this.handleIncomingMessage(data);
+            } catch (error) {
+                console.error('Error processing incoming message:', error);
+            }
+        };
+
+        this.mainSocket.onclose = () => {
+            console.log('Main WebSocket connection closed. Attempting to reconnect...');
+            setTimeout(() => this.initializeMainSocket(), 5000);
+        };
+    }
+
+    handleIncomingMessage(data) {
+        console.log ('3--Incoming message:', data);
+        switch (data.type) {
+            case 'new_chat_request':
+                this.handleNewChatRequest(data);
+                break;
+            case 'chat_accepted':
+                this.establishChatConnection(data.from, data.to);
+                break;
+            case 'chat_declined':
+                this.handleDeclinedChat(data.from, data.to);
+                break;
+            default:
+                console.log('Unknown message type:', data.type);
+        }
+    }
+
+    handleNewChatRequest(data) {
+        // Notify the UI of new chat request
+        const event = new CustomEvent('newChatRequest', {
+            detail: {
+                from: data.from,
+                to: data.to
+            }
+        });
+        window.dispatchEvent(event);
+    }
+
+    establishChatConnection(user1, user2) {
+        const chatId = this.generateChatId(user1, user2);
+        
+        // Check if connection already exists
+        if (this.connections.has(chatId)) {
+            return this.connections.get(chatId);
+        }
+
+        // Create new WebSocket connection for this chat
+        const chatSocket = new WebSocket(this.wsServerUrl);
+        
+        chatSocket.onopen = () => {
+            console.log(`Chat connection established between ${user1} and ${user2}`);
+            
+            // Send any queued messages
+            // send a init message to server
+            chatSocket.send(JSON.stringify({
+                type: 'init',
+                from: user1,
+                to: user2
+            }));
+            console.log ("chatid is", chatId, "messageQueue", this.messageQueue);
+            if (this.messageQueue.has(chatId)) {
+                this.messageQueue.get(chatId).forEach(message => {
+                    chatSocket.send(JSON.stringify(message));
+                });
+                this.messageQueue.delete(chatId);
+            }
+
+            // Notify UI that chat is ready
+            const event = new CustomEvent('chatEstablished', {
+                detail: {
+                    chatId,
+                    users: [user1, user2]
+                }
+            });
+            console.log ('event', event);
+            window.dispatchEvent(event);
+        };
+
+        chatSocket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            // Dispatch message to UI
+            const messageEvent = new CustomEvent('chatMessage', {
+                detail: {
+                    chatId,
+                    message: data
+                }
+            });
+            console.log ('data', data);
+            console.log ('messageEvent', messageEvent);
+            window.dispatchEvent(messageEvent);
+        };
+
+        chatSocket.onclose = () => {
+            this.connections.delete(chatId);
+            // Notify UI that chat has been closed
+            const event = new CustomEvent('chatClosed', {
+                detail: { chatId }
+            });
+            window.dispatchEvent(event);
+        };
+
+        // Set up idle timeout (10 minutes)
+        let idleTimeout;
+        const resetIdleTimeout = () => {
+            clearTimeout(idleTimeout);
+            idleTimeout = setTimeout(() => {
+                chatSocket.close();
+            }, 10 * 60 * 1000);
+        };
+
+        chatSocket.addEventListener('message', resetIdleTimeout);
+        resetIdleTimeout();
+
+        // Store the connection
+        this.connections.set(chatId, chatSocket);
+        return chatSocket;
+    }
+
+    sendMessage(fromUser, toUser, message) {
+        const chatId = this.generateChatId(fromUser, toUser);
+        const messageData = {
+            type: 'message',
+            from: fromUser,
+            to: toUser,
+            message: message,
+            timestamp: new Date().toISOString()
+        };
+
+        if (this.connections.has(chatId)) {
+            const socket = this.connections.get(chatId);
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify(messageData));
+            } else {
+                this.queueMessage(chatId, messageData);
+                this.establishChatConnection(fromUser, toUser);
+            }
+        } else {
+            this.queueMessage(chatId, messageData);
+            this.establishChatConnection(fromUser, toUser);
+        }
+    }
+
+    queueMessage(chatId, message) {
+        if (!this.messageQueue.has(chatId)) {
+            this.messageQueue.set(chatId, []);
+        }
+        this.messageQueue.get(chatId).push(message);
+    }
+
+    generateChatId(user1, user2) {
+        // Create consistent chat ID regardless of user order
+        return [user1, user2].sort().join('_');
+    }
+
+    closeChat(user1, user2) {
+        const chatId = this.generateChatId(user1, user2);
+        if (this.connections.has(chatId)) {
+            this.connections.get(chatId).close();
+            this.connections.delete(chatId);
+        }
+    }
+
+    closeAllConnections() {
+        this.connections.forEach(socket => socket.close());
+        this.connections.clear();
+        this.messageQueue.clear();
+        if (this.mainSocket) {
+            this.mainSocket.close();
+        }
+    }
+}
+
+class ChatEventHandlers {
+    constructor(chatManager) {
+        this.chatManager = chatManager;
+        this.initializeEventListeners();
+    }
+
+    initializeEventListeners() {
+        // Listen for new chat requests
+        window.addEventListener('newChatRequest', (event) => {
+            const { from, to } = event.detail;
+            
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'chat-notification';
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <p>New chat request from ${from}</p>
+                    <div class="notification-actions">
+                        <button class="accept-chat">Accept</button>
+                        <button class="decline-chat">Decline</button>
+                    </div>
+                </div>
+            `;
+
+            // Add notification to DOM
+            document.body.appendChild(notification);
+
+            // Handle accept/decline actions
+            notification.querySelector('.accept-chat').addEventListener('click', () => {
+                this.chatManager.startNewChat(from);
+                notification.remove();
+            });
+
+            notification.querySelector('.decline-chat').addEventListener('click', () => {
+                notification.remove();
+                // Send decline message through WebSocket if needed
+                if (this.chatManager.activeSockets[from]) {
+                    this.chatManager.activeSockets[from].send(JSON.stringify({
+                        type: 'chat_declined',
+                        from: to,
+                        to: from
+                    }));
+                }
+            });
+
+            // Auto-remove notification after 30 seconds
+            setTimeout(() => notification.remove(), 30000);
+        });
+
+        // Listen for established chat connections
+        window.addEventListener('chatEstablished', (event) => {
+            const { chatId, users } = event.detail;
+            console.log('Chat established:', this.chatManager.activeChats, chatId, users);
+            const otherUser = users.find(user => user !== this.chatManager.currentUser);
+
+            console.log('Chat established with:', otherUser);
+            
+            // Create new chat tab if it doesn't exist
+            if (!this.chatManager.activeChats.has(otherUser)) {
+                this.chatManager.createNewChatTab(otherUser);
+                this.chatManager.addSystemMessage(`Chat connected with ${otherUser}`);
+                this.chatManager.activateChat(otherUser);
+            }
+            
+            // Activate the chat tab
+
+            // Update UI to show connected status
+            const chatTab = document.querySelector(`[data-username="${otherUser}"]`);
+            if (chatTab) {
+                chatTab.classList.add('connected');
+            }
+            console.log('Chat established:', this.chatManager.activeChats, chatId, users);
+
+        });
+
+        // Listen for chat messages
+        window.addEventListener('chatMessage', (event) => {
+            const { chatId, message } = event.detail;
+
+            console.log('Chat message received:', chatId, message);
+            
+            // Check if this is a previous messages batch
+            if (message.type === 'previous_messages') {
+                console.log('Processing previous messages:', message.messages);
+                
+                // // Iterate through the array of previous messages
+                // message.messages.forEach(msg => {
+                //     const { from, to, message: content, timestamp } = msg;
+                //     this.processMessage(from, to, content, timestamp);
+                // });
+            } else {
+                // Handle single message
+                const { from, to, message: content } = message;
+
+                console.log('Processing single message:', message);
+                this.processMessage(from, to, content);
+            }
+        });
+        
+        
+        // Listen for closed chats
+        window.addEventListener('chatClosed', (event) => {
+            const { chatId } = event.detail;
+            const [user1, user2] = chatId.split('_');
+            const otherUser = user1 === this.chatManager.currentUser ? user2 : user1;
+            
+            // Remove chat tab and cleanup
+            this.chatManager.closeChat(otherUser);
+            
+            // Show disconnection message
+            this.chatManager.addSystemMessage(`Chat with ${otherUser} has been disconnected`);
+            
+            // Remove 'connected' status from tab if it still exists
+            const chatTab = document.querySelector(`[data-username="${otherUser}"]`);
+            if (chatTab) {
+                chatTab.classList.remove('connected');
+            }
+        });
+    }
+
+    // Helper method to process both types of messages
+    processMessage(from, to, content, timestamp = null) {
+        // Determine if message is sent or received
+        const isSent = from === this.chatManager.currentUser;
+        const otherUser = isSent ? to : from;
+
+        // console.log('Processing message:', from, to, content, timestamp, otherUser);
+    
+        // Create chat tab if it doesn't exist (for first message)
+        if (!this.chatManager.activeChats.has(otherUser)) {
+            this.chatManager.createNewChatTab(otherUser);
+        }
+    
+        // Add message to chat
+        this.chatManager.addMessage(otherUser, content, isSent, timestamp);
+    
+        // console.log('Message processed:', content);
+    
+        // Only show notifications and play sounds for new messages, not previous ones
+        if (!timestamp) {
+            // Show notification if chat is not active
+            const activeTab = document.querySelector('.chat-tab.active');
+            if (!isSent && (!activeTab || activeTab.dataset.username !== otherUser)) {
+                this.showMessageNotification(from, content);
+            }
+    
+            // Play notification sound for received messages
+            if (!isSent) {
+                this.playMessageSound();
+            }
+        }
+    }
+
+    showMessageNotification(from, content) {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = 'message-notification';
+        notification.innerHTML = `
+        <div class="notification-content">
+        <strong>${from}</strong>: ${this.truncateMessage(content)}
+        </div>
+        `;
+
+        // Add notification to DOM
+        document.body.appendChild(notification);
+
+        // Remove notification after 5 seconds
+        setTimeout(() => notification.remove(), 5000);
+
+        // Handle click to focus chat
+        notification.addEventListener('click', () => {
+            this.chatManager.activateChat(from);
+            notification.remove();
+        });
+    }
+
+    truncateMessage(message, length = 50) {
+        if (message.length <= length) return message;
+        return message.substring(0, length) + '...';
+    }
+
+    playMessageSound() {
+        // Create and play notification sound
+        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YWoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBhRxu/LhnzEFBDaR3/mytRAAAyKr/fnhkxcAEVTK/O7MfwYAK3/s/tinaQAGWsX/8cJ5AQBNp/v/x4UCAAhj3f/rqWEAAD+6/v/sjwMADm7n/96LPwAAUND//tW5CgAZhOz/x3wwAABPz///0IEFAAtx9f/WhCoAAETR//7biwAAB2n4/8x7JgAAQOL//9mIBAAFZ/j/w3UiAAA87f//1YYDAANq+f/GdB4AADr0//7ThgEAAWj6/8BxHAAANvr//9KGAQABZ/v/vW8aAAA1///+0YUAAAB0/P+7bBgAADGF//7WgwAAAXL7/7xsFwABM43//tOCAAAAcvv/umkWAAA2lv/+zXUAAABz/v+8aRUAADSd//7NdwAAAHX9/7tmFAAAM6P//sp0AAAAdv3/uWYTAAAyqP/+yHIAAAB3/f+3ZBEAADJ0//7GcQAAAHj9/7RjEAAAL3v//sRvAAAAef3/s2EPAAAuhP/+wm4AAAB6/f+xYA4AACyO//7AbQAAAHv9/69fDQAAKpj//r5rAAAAfP3/rV4MAAAo7//+vGsAAAB8/f+rXQsAACH1//66aQAAAH39/6lcCgAAIP///rhoAAAAff3/p1sJAAAAAAD+t2cAAAB+/f+lWggAAP////61ZgAAAH79/6NZBwAA/////rNkAAAAf/3/oVgGAAD/////sWMAAACA/f+fVwUAAP////+vYgAAAIH9/51WBAAA/////61hAAAAgf3/m1UDAAD/////q2AAAAACAgICAgYGBgYICQkJCQoLCwsLDQ0NDQ4PDw8PEBAQEBESEhISFBQUFBUXFwAAAAAAAAAAAAAAACH5BAEAAAEALAAAAAASAAMAAAIdhAOZh+ffplZnXomeXJ6Kc12gJnJch4aqyUkuAAA7');
+        audio.play().catch(err => console.log('Error playing notification sound:', err));
+    }
+}
+
+class IntegratedChatManager {
+    constructor() {
+        this.initialized = false;
+        this.currentUser = null;
+        this.activeChats = new Map();
+        this.activeSockets = {};
+        this.friends = new Set();
+        this.initializeElements();
+        this.wsEstablisher = new WebSocketEstablisher();
+        this.eventHandlers = new ChatEventHandlers(this);
+        this.attachEventListeners();
+    }
+
+    initializeElements() {
+        this.elements = {
+            container: document.getElementById('chat-container'),
+            header: document.getElementById('chat-header'),
+            minimize: document.getElementById('chat-minimize'),
+            messages: document.getElementById('chat-messages'),
+            input: document.getElementById('chat-message-input'),
+            sendButton: document.getElementById('chat-send-button'),
+            usernameInput: document.getElementById('direct-username-input'),
+            startChatBtn: document.getElementById('start-direct-chat-btn'),
+            friendsList: document.getElementById('friend-list'),
+            showFriendsBtn: document.getElementById('show-friends-btn'),
+            closeFriendsBtn: document.getElementById('close-friends-list'),
+            chatTabs: document.getElementById('chat-tabs'),
+            connectionStatus: document.getElementById('connection-status')
+        };
+    }
+
+    attachEventListeners() {
+        // UI Controls
+        this.elements.minimize.addEventListener('click', () => this.toggleChat());
+        this.elements.showFriendsBtn.addEventListener('click', () => this.toggleFriendsList());
+        this.elements.closeFriendsBtn.addEventListener('click', () => this.toggleFriendsList());
+        
+        // Chat Controls
+        this.elements.sendButton.addEventListener('click', () => this.handleSendMessage());
+        this.elements.input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.handleSendMessage();
+        });
+        
+        // New Chat
+        this.elements.startChatBtn.addEventListener('click', () => this.startNewChat());
+        this.elements.usernameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.startNewChat();
+        });
+    }
+
+    async login(username) {
+        try {
+            const response = await fetch('/api/user_data/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.getAuthToken()}`
+                }
+            });
+            
+            if (response.ok) {
+                this.currentUser = username;
+                this.elements.connectionStatus.className = 'status-online';
+                this.addSystemMessage(`Logged in as ${username}`);
+                console.log('Login successful:', username);
+                // await this.fetchFriendList();
+            }
+        } catch (error) {
+            console.error('Login failed:', error);
+            this.addSystemMessage('Login failed. Please try again.');
+        }
+    }
+
+    startNewChat(username = null) {
+        const chatUsername = username || this.elements.usernameInput.value.trim();
+        if (!chatUsername) return;
+        
+        // Create chat tab if it doesn't exist
+        if (!this.activeChats.has(chatUsername)) {
+            this.createNewChatTab(chatUsername);
+            this.elements.usernameInput.value = '';
+            
+            // Establish WebSocket connection through WebSocketEstablisher
+            this.wsEstablisher.establishChatConnection(this.currentUser, chatUsername);
+        }
+        
+        this.activateChat(chatUsername);
+        this.elements.friendsList.classList.add('hidden');
+    }
+
+    handleSendMessage() {
+        const message = this.elements.input.value.trim();
+        if (!message) return;
+        
+        const activeTab = this.elements.chatTabs.querySelector('.chat-tab.active');
+        if (!activeTab) {
+            this.addSystemMessage('Please select a chat first');
+            return;
+        }
+        
+        const recipient = activeTab.dataset.username;
+        this.wsEstablisher.sendMessage(this.currentUser, recipient, message);
+        this.elements.input.value = '';
+    }
+
+    createNewChatTab(username) {
+        const tab = document.createElement('div');
+        tab.className = 'chat-tab';
+        tab.dataset.username = username;
+        tab.innerHTML = `
+            <span class="tab-name">${username}</span>
+            <button class="close-tab">×</button>
+        `;
+        
+        tab.querySelector('.close-tab').addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.closeChat(username);
+        });
+        
+        tab.addEventListener('click', () => this.activateChat(username));
+        
+        this.elements.chatTabs.appendChild(tab);
+        this.activeChats.set(username, {
+            messages: [],
+            tab: tab
+        });
+    }
+
+    closeChat(username) {
+        // Close WebSocket connection through WebSocketEstablisher
+        this.wsEstablisher.closeChat(this.currentUser, username);
+        
+        const chatData = this.activeChats.get(username);
+        if (chatData) {
+            chatData.tab.remove();
+            this.activeChats.delete(username);
+            
+            const nextChat = this.activeChats.keys().next().value;
+            if (nextChat) {
+                this.activateChat(nextChat);
+            } else {
+                this.elements.messages.innerHTML = '';
+            }
+        }
+    }
+
+    addMessage(username, content, isSent) {
+        const chatData = this.activeChats.get(username);
+        if (!chatData) return;
+        
+        const message = {
+            content,
+            timestamp: new Date(),
+            isSent
+        };
+        chatData.messages.push(message);
+        
+        if (this.elements.chatTabs.querySelector('.chat-tab.active')?.dataset.username === username) {
+            this.displayMessage(message);
+        }
+    }
+
+    activateChat(username) {
+        this.elements.chatTabs.querySelectorAll('.chat-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        
+        const chatData = this.activeChats.get(username);
+        if (chatData) {
+            chatData.tab.classList.add('active');
+            this.displayMessages(username);
+        }
+    }
+
+    displayMessage(message) {
+        const messageElement = document.createElement('div');
+        messageElement.className = `chat-message ${message.isSent ? 'sent' : 'received'}`;
+        messageElement.textContent = message.content;
+        this.elements.messages.appendChild(messageElement);
+        this.elements.messages.scrollTop = this.elements.messages.scrollHeight;
+    }
+
+    displayMessages(username) {
+        const chatData = this.activeChats.get(username);
+        if (!chatData) return;
+        this.elements.messages.innerHTML = '';
+        chatData.messages.forEach(message => this.displayMessage(message));
+    }
+
+    addSystemMessage(content) {
+        const messageElement = document.createElement('div');
+        messageElement.className = 'chat-message system';
+        messageElement.textContent = content;
+        this.elements.messages.appendChild(messageElement);
+        this.elements.messages.scrollTop = this.elements.messages.scrollHeight;
+    }
+
+    // Utility methods
+    toggleChat() {
+        const isMinimized = this.elements.container.classList.toggle('minimized');
+        this.elements.minimize.textContent = isMinimized ? '+' : '-';
+    }
+
+    toggleFriendsList() {
+        this.elements.friendsList.classList.toggle('hidden');
+    }
+
+    getAuthToken() {
+        return this.getCookie('access_token');
+    }
+
+    getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) {
+            return parts.pop().split(";").shift();
+        }
+        return null;
+    }
+
+    // Cleanup method
+    destroy() {
+        this.wsEstablisher.closeAllConnections();
+        this.activeChats.clear();
+        this.elements.messages.innerHTML = '';
+        this.elements.chatTabs.innerHTML = '';
+    }
+}
+
+// export default IntegratedChatManager;
+// export default WebSocketEstablisher;
+
+// export const combinedChat = new IntegratedChatManager();
+export const combinedChat = new CombinedChatManager();
+// // Initialize chat on page load
+// document.addEventListener('DOMContentLoaded', () => {
+//     const gameChat = new GameChat();
+    
+//     // Example login (you'd replace this with actual login mechanism)
+//     gameChat.login('currentUsername');
+// });
+
+export { Game , WebSocketManager, GameChat };

@@ -6,6 +6,7 @@ import uuid
 from .Tournament import Tournament
 from .Tournament import TournamentManager
 from django.core.serializers.json import DjangoJSONEncoder
+from asgiref.sync import sync_to_async
 
 
 import logging
@@ -20,6 +21,7 @@ logging.basicConfig(
 active_users = []
 active_games = {}
 lobby = []  # Fixed typo from 'looby'
+friend_looby = {}
 
 class PongConsumer(AsyncWebsocketConsumer):
     tournament_manager = TournamentManager()
@@ -40,6 +42,7 @@ class PongConsumer(AsyncWebsocketConsumer):
         self.match = None
         self.player = ""
         self.username = ""
+        self.opponentUsername = ""
 
     async def connect(self):
         self.for_lobby = [self.channel_name, self]
@@ -82,12 +85,21 @@ class PongConsumer(AsyncWebsocketConsumer):
                     self.room_group_name,
                     {
                         "type": "game_over",
-                        "winner": "You won! Opponent disconnected."
+                        "winner": "You won! Opponent disconnected.",
+                        "message": "You won! Opponent disconnected.",
+                        "player1": {
+                            "score": self.game.player1.score
+                        },
+                        "player2": {
+                            "score": self.game.player2.score
+                        },
                     }
                 )
-                if self.username in active_users:
-                    active_users.pop(self.username)
-            del active_games[self.room_name]
+                # if self.username in active_users:
+                #     active_users.remove(self.username)
+            # del active_games[self.room_name]
+        if self.username in active_users:
+            active_users.remove(self.username)
 
         # Handle lobby cleanup
         if self.for_lobby in lobby:
@@ -104,16 +116,23 @@ class PongConsumer(AsyncWebsocketConsumer):
         message_type = data.get("type", None)
         self.type = message_type
         self.dem = data.get('demonsions', {})
-        self.username = data.get('username', "")
 
+        if message_type != "game": self.username = data.get('username', "")
+
+        self.friend = data.get('friend', None)
+
+        if self.friend:
+            self.looby_name = self.username + "_" + self.friend if self.username < self.friend else self.friend + "_" + self.username
+            # friend_looby[self.looby_name] = []
+            # friend_looby.get(self.looby_name, []).append(self.for_lobby)
         if message_type in ["AiOpenent", "BotOpenent", "LocalMultiplayerOpenent"]:
             await self.handle_single_player_game(message_type, data)
         elif message_type == "OnlineMultiplayerOpenent":
             if self.username not in active_users:
-                print ("--active_users--", active_users)
-                lobby.append(self.for_lobby) 
-                await self.handle_online_multiplayer(lobby, self.dem)
-                print ("2---active_users--", active_users)
+                print ("--active_users--", self.username)
+                lobby.append(self.for_lobby) if self.friend is None else friend_looby.setdefault(self.looby_name, []).append(self.for_lobby)
+                await self.handle_online_multiplayer(lobby if self.friend is None else friend_looby.get(self.looby_name, []), self.dem, self.friend)
+                print ("2---active_users--", self.username)
             else :
                 await self.send(text_data=json.dumps({
                     "type": "failed",
@@ -148,18 +167,39 @@ class PongConsumer(AsyncWebsocketConsumer):
         dimensions.from_dict(data.get('demonsions', {}))
 
         player_types = {
-            "AiOpenent": ["AI", "Player1"],
-            "BotOpenent": ["Bot", "Player1"],
+            "AiOpenent": ["Player1", "AI"],
+            "BotOpenent": ["Player1", "Bot"],
             "LocalMultiplayerOpenent": ["Player1", "Player2"]
         }
 
         self.game = Game(dimensions, player_types[game_type])
         active_games[self.room_name] = self.game
+        self.game.username = "Blue"
+        self.game.opponentUsername = "Red"
 
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
         )
+
+        opp = player_types[game_type][1]
+        user = self.username
+        print ("opp = ", opp, "user = ", user)
+        if opp == "Player2":
+            opp = "Red"
+            user = "Blue"
+            print ("2-opp = ", opp, "user = ", user)
+        
+
+        await self.send(text_data=json.dumps({
+            "type": "game_start",
+            "state": "Match starting!",
+            "Iam": "Blue",
+            "player": "player1",
+            "opp": opp,
+            "username": user,
+            "tournament": self.trnmt
+        }))
 
         asyncio.create_task(self.run_game())
 
@@ -171,7 +211,9 @@ class PongConsumer(AsyncWebsocketConsumer):
                 self.room_group_name,
                 {
                     "type": "countdown_state",
-                    "count": count
+                    "count": count,
+                    "username": self.username,
+                    "opp": self.opponentUsername
                 }
             )
             await asyncio.sleep(1)
@@ -181,7 +223,9 @@ class PongConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             {
                 "type": "countdown_state",
-                "count": "GO!"
+                "count": "GO!",
+                "username": self.username,
+                "opp": self.opponentUsername
             }
         )
         await asyncio.sleep(0.5)  # Short pause after "GO!"
@@ -200,6 +244,7 @@ class PongConsumer(AsyncWebsocketConsumer):
             if self.game.Train == False:
                 await asyncio.sleep(0.016)  # 60 FPS
         winner = [self.game.player1, "player1"] if self.game.player1.score > self.game.player2.score else [self.game.player2, "player2"]
+        # self.game.resetGame()
         # print ("game done 1--", winner[1], self.trnmt)
         # if self.trnmt:
         #     self.tournament.active_round -= 1
@@ -218,7 +263,7 @@ class PongConsumer(AsyncWebsocketConsumer):
         #     await self.handle_tournament_match_complete(None)
         return winner
 
-    async def  handle_online_multiplayer(self, looby, dem):
+    async def  handle_online_multiplayer(self, looby, dem, friend):
         # looby.append(self.for_lobby)        
         if len(looby) > 1:
             player1 = looby.pop(0)
@@ -242,15 +287,24 @@ class PongConsumer(AsyncWebsocketConsumer):
             player1[1].game = player1[1].game
             player2[1].game = player1[1].game
             player1[1].game.online = True
-            player2[1].game.online = True
             player1[1].done = False
             player2[1].done = False
 
-            player1[1].username = player1[1].username
-            player1[1].opponentUsername = player2[1].username
+            # player[1].opponent_username = player2[1].username
+            # player2[1].opponent_username = player1[1].username
 
-            player2[1].username = player2[1].username
-            player2[1].opponentUsername = player1[1].username
+            print ( "username1 =", player1[1].username, "username2 =", player2[1].username)
+
+            player1[1].game.username = player1[1].username
+            player1[1].opponentUsername = player2[1].username
+            player1[1].game.opponentUsername = player2[1].username
+
+            print ( "username1 =", player1[1].game.username, "username2 =", player1[1].game.opponentUsername)
+
+
+            # player2[1].game.username = player2[1].username
+            # player2[1].opponentUsername = player1[1].username
+            # player2[1].game.opponentUsername = player1[1].game.username
 
             # Add both players to the group
             for player in [player1, player2]:
@@ -281,11 +335,11 @@ class PongConsumer(AsyncWebsocketConsumer):
             })
             print ("room_name: " , player1[1].room_name)
             asyncio.create_task(player1[1].run_game())
-            active_users.append(self.username)
+            if self.trnmt == False: active_users.append(self.username)
             return player1[1].room_name
         else:
             await self.send(text_data=json.dumps({"type": "waiting"}))
-            active_users.append(self.username)
+            if self.trnmt == False: active_users.append(self.username)
         return None
 
     async def game_state(self, event):
@@ -302,11 +356,49 @@ class PongConsumer(AsyncWebsocketConsumer):
         self.done = True
         # Send the game over message to the frontend
         # await self.send(text_data=json.dumps(event))
-        if self.room_name in active_games:
+        print ("user = ", self.username, "opp = ", self.opponentUsername)
+        if self.room_name in active_games and self.opponentUsername != "":
             print ("delete : ", self.room_name)
             if active_games[self.room_name].online and self.trnmt is False:
+                # print ("delete from active_users : ", active_users)
+                print (f"delete from {active_users} : ", self.username, flush=True)
                 if self.username in active_users:
-                    active_users.pop(self.username)
+                    print (f"delete me from {active_users} : ", self.username, flush=True)
+                    active_users.remove(self.username)
+                if self.opponentUsername in active_users:
+                    print (f"delete opp from {active_users} : ", self.opponentUsername, flush=True)
+                    active_users.remove(self.opponentUsername)
+            
+            if self.game.online:
+                # Create database record
+
+                from Ping.models import GameScore
+
+                await sync_to_async(GameScore.objects.update_or_create) (
+                    room_name=self.room_name,
+                    player1_username=self.game.username,
+                    player2_username=self.game.opponentUsername,
+                    player1_score=self.game.player1.score,
+                    player2_score=self.game.player2.score,
+                    winner=self.game.username if self.game.player1.score > self.game.player2.score else self.game.opponentUsername,
+                    game_type='tournament' if self.trnmt else 'regular',
+                    tournament_id=self.tournament.tournament_id if self.trnmt else None
+                )
+
+                game_score = {
+                    "room_name": self.room_name,
+                    "player1_username": self.game.username,
+                    "player2_username": self.game.opponentUsername,
+                    "player1_score": self.game.player1.score,
+                    "player2_score": self.game.player2.score,
+                    "winner": self.game.username if self.game.player1.score > self.game.player2.score else self.game.opponentUsername,
+                    "game_type": 'tournament' if self.trnmt else 'regular',
+                    "tournament_id": self.tournament.tournament_id if self.trnmt else None
+                }
+
+
+                print ("game_score created : " , game_score)
+
             del active_games[self.room_name]
         if self.trnmt:
             if self.tournament:
@@ -315,11 +407,18 @@ class PongConsumer(AsyncWebsocketConsumer):
                 await self.send(text_data=json.dumps({
                     "type": "game_over",
                     "winner": "player1" if self.game.player1.score > self.game.player2.score else "player2",
+                    "player1": {
+                        "score": self.game.player1.score
+                    },
+                    "player2": {
+                        "score": self.game.player2.score
+                    },
                     "winner_username": winner[0].username,
                     "loser_username": loser[0].username,
                     "winner_score": winner[0].score,
                     "loser_score": loser[0].score,
-                    "match_id": self.match["match_id"]
+                    "match_id": self.match["match_id"],
+                    "message": "You won! wait for the round to finish to proceed." if self.player == winner[1] else "You Lost, just scram"
                 }))
             winner = [self.game.player1, "player1"] if self.game.player1.score > self.game.player2.score else [self.game.player2, "player2"]
             if self.player == winner[1]:
@@ -343,7 +442,7 @@ class PongConsumer(AsyncWebsocketConsumer):
                 print ("sending tournament info to loser: ", self)
 
                 if self.username in active_users:
-                    active_users.pop(self.username)
+                    active_users.remove(self.username)
                 # while (self.tournament):
                 # try:
                 await self.handle_tournament_update()
@@ -448,6 +547,7 @@ class PongConsumer(AsyncWebsocketConsumer):
                 await self.send(text_data=json.dumps({
                     "type": "tournament_joined",
                     "tournament_id": tournament_id
+                    # "username": self.username,
                 }))
         else:
             await self.send(text_data=json.dumps({
@@ -471,7 +571,7 @@ class PongConsumer(AsyncWebsocketConsumer):
                 looby.append([match["player2"].channel_name, match["player2"]])
 
                 # try:
-                room_name = await self.handle_online_multiplayer(looby, self.dem)
+                room_name = await self.handle_online_multiplayer(looby, self.dem, None)
                 # print("handle_online_multiplayer executed successfully!")
                 # except Exception as e:
                 #     print(f"Error in handle_online_multiplayer: {e}")
@@ -697,3 +797,93 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'message': event['message'],
             'sender': event['sender']
         }))
+
+    
+# class GameChatConsumer(AsyncWebsocketConsumer):
+#     async def connect(self):
+#         # Extract users from URL routing
+#         # self.user1 = self.scope['url_route']['kwargs']['user1']
+#         # self.user2 = self.scope['url_route']['kwargs']['user2']
+        
+#         # # Create a unique room name
+#         # self.room_name = f'chat_{sorted([self.user1, self.user2])[0]}_{sorted([self.user1, self.user2])[1]}'
+        
+#         # # Join room group
+#         # await self.channel_layer.group_add(
+#         #     self.room_name,
+#         #     self.channel_name
+#         # )
+        
+#         await self.accept()
+
+#     async def disconnect(self, close_code):
+#         # Leave room group
+#         if hasattr(self, 'room_name'):
+#             await self.channel_layer.group_discard(
+#                 self.room_name,
+#                 self.channel_name
+#             )
+
+#     async def receive(self, text_data):
+#         # Parse incoming message
+#         try:
+#             data = json.loads(text_data)
+#             message_type = data.get('type')
+            
+#             if message_type == 'init':
+#                 # Handle initialization
+#                 self.current_user = data['from']
+#                 self.friend_user = data['to']
+#                 # Create a unique room name for this chat pair
+#                 users = sorted([self.current_user, self.friend_user])
+#                 self.room_name = f"chat_{users[0]}_{users[1]}"
+#                 # Join room
+#                 await self.channel_layer.group_add(
+#                     self.room_name,
+#                     self.channel_name
+#                 )
+            
+#             elif message_type == 'message':
+#                 # Handle chat message
+#                 await self.channel_layer.group_send(
+#                     self.room_name,
+#                     {
+#                         'type': 'chat_message',
+#                         'message': data['message'],
+#                         'from': data['from'],
+#                         'to': data['to']
+#                     }
+#                 )
+        
+#         except json.JSONDecodeError:
+#             await self.send(text_data=json.dumps({
+#                 'error': 'Invalid message format'
+#             }))
+        
+#         # # Validate message
+#         # if not message or not sender or not recipient:
+#         # #     return
+        
+#         # # Send message to room group
+#         # await self.channel_layer.group_send(
+#         #     self.room_name,
+#         #     {
+#         #         'type': 'chat_message',
+#         #         'message': message,
+#         #         'sender': sender
+#         #     }
+#         # )
+
+#     # async def chat_message(self, event):
+#     #     # Send message to WebSocket
+#     #     await self.send(text_data=json.dumps({
+#     #         'message': event['message'],
+#     #         'sender': event['sender']
+#     #     }))
+#     async def chat_message(self, event):
+#         # Send message to WebSocket
+#         await self.send(text_data=json.dumps({
+#             'message': event['message'],
+#             'from': event['from'],
+#             'to': event['to']
+#         }))
