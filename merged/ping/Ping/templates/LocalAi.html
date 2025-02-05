@@ -1,0 +1,286 @@
+<!doctype html>
+<html>
+  <head>
+		<title>Game</title>
+		<style>
+			body, html {
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+				height: 100%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				background-color: black;
+			}
+			#gameCanvas {
+				position: relative;
+				width: 100vw;
+				height: 100vh;
+				z-index: 1; /* Place in front of the particles */
+			}
+			#particles-background {
+				position: absolute;
+				background-color: rgba(red, green, blue, 1);
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				z-index: 0; /* Place behind the game canvas */
+			}
+			#scoreboard {
+				text-align: center;
+				font-family: Segoe UI, Helvetica, Ubuntu, sans-serif;
+				color: white;
+			}
+			#scores {
+				font-size: 600%; 
+				padding: 0; 
+				margin: 0;
+				color: white;
+			}
+			#title {
+				background-color: white;
+				color: black;
+			}
+		</style>
+		<div id="camera-controls">
+			<button id="up-arrow">▲</button>
+			<button id="left-arrow">◄</button>
+			<button id="down-arrow">▼</button>
+			<button id="right-arrow">►</button>
+			<button id="zoom-in">+</button>
+			<button id="zoom-out">−</button>
+			<button id="reset">o</button>
+		</div>
+		
+		<style>
+			#camera-controls {
+				position: fixed;
+				bottom: 20px;
+				left: 20px;
+				width: 90px;
+				height: 90px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				border-radius: 50%;
+				background: rgba(255, 255, 255, 0.05);
+				backdrop-filter: blur(8px);
+				box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+				cursor: move;
+				user-select: none;
+				transition: transform 0.2s ease;
+				z-index: 10;
+			}
+		
+			#camera-controls:hover {
+				transform: scale(1.05);
+				background: rgba(255, 255, 255, 0.25);
+				z-index: 10;
+			}
+		
+			#camera-controls button {
+				position: absolute;
+				background: none;
+				border: none;
+				color: rgba(255, 255, 255, 0.8);
+				font-size: 16px;
+				cursor: pointer;
+				transition: color 0.2s, transform 0.2s;
+				z-index: 10;
+			}
+		
+			#camera-controls button:hover {
+				color: #ffdf00;
+				transform: scale(1.2);
+				z-index: 10;
+			}
+		
+			#up-arrow {
+				top: 5px;
+				z-index: 10;
+
+			}
+		
+			#down-arrow {
+				bottom: 5px;
+				z-index: 10;
+
+			}
+		
+			#left-arrow {
+				left: 5px;
+				z-index: 10;
+
+			}
+		
+			#right-arrow {
+				right: 5px;
+				z-index: 1;
+
+			}
+			#zoom-in {
+				top: 5px;
+				right: 5px;
+			}
+			#zoom-out {
+				bottom: 5px;
+				right: 5px;
+			}
+			#reset {
+				bottom: 5px;
+				left: 5px;
+			}
+		</style>
+		
+		<script>
+			const cameraControls = document.getElementById("camera-controls");
+			let isDragging = false;
+			let offsetX, offsetY;
+		
+			cameraControls.addEventListener("mousedown", (e) => {
+				isDragging = true;
+				offsetX = e.clientX - cameraControls.getBoundingClientRect().left;
+				offsetY = e.clientY - cameraControls.getBoundingClientRect().top;
+			});
+		
+			document.addEventListener("mousemove", (e) => {
+				if (isDragging) {
+					cameraControls.style.left = `${e.clientX - offsetX}px`;
+					cameraControls.style.top = `${e.clientY - offsetY}px`;
+				}
+			});
+		
+			document.addEventListener("mouseup", () => {
+				isDragging = false;
+			});
+		</script>
+		
+		
+		
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Camera View Rotation</title>
+		<style>
+			body { margin: 0; overflow: hidden; }
+			#rotate-buttons {
+				position: absolute;
+				top: 10px;
+				left: 10px;
+				display: flex;
+				flex-direction: column;
+				gap: 10px;
+			}
+		</style>
+		
+		<script type="module">
+			const csrfToken = '{{ csrf_token }}'; // Add this in your HTML
+		</script>
+
+
+		<script src="https://cdn.jsdelivr.net/npm/tsparticles@2.10.1"></script>
+		<script>
+			// Define setupParticles function globally
+			async function setupParticles() {
+				const particlesConfig = {
+					fullScreen: true,
+					background: { color: { value: "#000" } },
+					particles: {
+						number: {
+						value: 500, // Decrease number for a less crowded, more focused effect
+						},
+						size: {
+						value: 3,  // Larger particles (stars)
+						random: true,  // Vary the size
+						animation: {
+							enable: true,
+							speed: 2,  // Slower size animation for a more glowing feel
+							minimumValue: 1,
+						},
+						},
+						opacity: {
+						value: 0.8,  // Higher opacity for a more prominent effect
+						random: true,
+						animation: {
+							enable: true,
+							speed: 2,
+							minimumValue: 0.4,  // Make opacity flicker and vary
+						},
+						},
+						color: {
+						value: ["#ffffff"],
+						animation: {
+							enable: true,
+							speed: 50,
+							sync: false,
+							startValue: "random",  // Use random colors for a dynamic effect
+						},
+						},
+						move: {
+						enable: true,
+						speed: 0.5,  // Slow movement to mimic stars drifting
+						random: true,  // Add randomness to their direction
+						direction: "none",  // Floating effect, no fixed direction
+						straight: false,
+						outModes: {
+							bottom: "out",
+							left: "out",
+							right: "out",
+							top: "out",
+						},
+						},
+						links: {
+						enable: false,  // Disable lines between particles (no connections)
+						},
+						life: {
+						duration: 15,  // Longer lifespan to keep stars in the scene longer
+						count: 1,
+						},
+					},
+					};
+
+		
+			  const particlesContainer = document.getElementById("particles-background");
+			  await tsParticles.load(particlesContainer, particlesConfig);
+			}
+			window.setupParticles = setupParticles; // Expose to global scope
+		  </script>
+	</head>
+	<body onload="setup();">
+		{% load static %}
+		<!-- # where the game will be displayed -->
+		<div id="particles-background"></div>
+		<div id='gameCanvas'></div>
+		
+		<!-- # for particle effects -->
+		<!-- <script src="https://cdn.jsdelivr.net/npm/tsparticles"></script> -->
+		
+		<script src="https://cdn.jsdelivr.net/npm/stats.js@0.17.0/build/stats.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+		<!-- <script src="https://cdn.jsdelivr.net/npm/three@0.135.0/examples/js/controls/OrbitControls.js"></script> -->
+        <!-- <script src="{% static 'js/keys.js'%}" defer></script> -->
+		<script src="https://cdn.jsdelivr.net/npm/three@0.135.0/examples/js/loaders/OBJLoader.js"></script>
+		<script type="module" src="{% static 'js/setup2.js'%}"></script>
+
+		<script type="module">
+    		import { Game, WebSocketManager } from "{% static 'js/setup2.js' %}";
+			
+			// import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.135.0/build/three.module.js";
+
+			function setup () {
+				console.log ('Setting up game');
+				var game = new Game();
+
+				var wsManager = new WebSocketManager("ws://localhost:8000/ws/pong/", game, "AiOpenent");
+				game.animate();
+				// requestAnimationFrame(() => game.animate());
+			}
+			window.setup = setup; // Expose setup function to the window
+			//expose the setupParticles function to the window
+			// window.setupParticles = setupParticles;
+
+		</script>
+		
+	</body>
+</html>

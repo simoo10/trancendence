@@ -1,0 +1,318 @@
+<!doctype html>
+<html>
+  <head>
+		<title>Game</title>
+		<style>
+			body {
+				background-color: black;
+			}
+			#gameCanvas {
+				background-color: black;
+				width: 640px;
+				height: 360px;
+				margin: auto;
+				align: center;
+			}
+			#scoreboard {
+				text-align: center;
+				font-family: Segoe UI, Helvetica, Ubuntu, sans-serif;
+				color: white;
+			}
+			#scores {
+				font-size:600%; 
+				padding:0; 
+				margin:0;
+				color: white;
+			}
+			#title {
+				background-color: white;
+				color: black;
+			}
+		</style>
+	</head>
+	<body onload='setup();'>
+		<!-- # where the game will be displayed -->
+		<div id='gameCanvas'></div>
+		
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+		<script> 
+			var renderer = new THREE.WebGLRenderer();
+			
+			var planQuality = 10;
+			var planWidth = window.innerWidth / 4.8;
+			var planHeight = planWidth / 2;
+
+			// Create a camera to see the scene
+			var fov = 60;  // Field of view in degrees
+			var aspect = window.innerWidth / window.innerHeight;  // Aspect ratio of the display
+			var near = 0.1;  // Near clipping plane
+			var far = 1000;  // Far clipping plane
+			var camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
+			
+			scene = new THREE.Scene();
+			
+			var paddleWidth = window.innerWidth / 250;
+			var paddleHeight = window.innerHeight / 48.05;
+			var paddleDepth = 5;
+			var paddleQuality = 1;
+			var paddle1 = new THREE.Mesh(
+				new THREE.BoxGeometry(paddleWidth, paddleHeight, paddleDepth, paddleQuality, paddleQuality, paddleQuality),
+				new THREE.MeshLambertMaterial({color: 0x0000CC})
+			);
+			var paddle2 = new THREE.Mesh(
+				new THREE.BoxGeometry(paddleWidth, paddleHeight, paddleDepth, paddleQuality, paddleQuality, paddleQuality),
+				new THREE.MeshLambertMaterial({color: 0xCC0000})
+			);
+			
+			var paddle1Dir = 1;
+			
+			var UpKey1 = false;
+			var DownKey1 = false;
+			var RightKey1 = false;
+			var LeftKey1 = false;
+			
+			// create the sphere's material
+			var sphereMaterial = new THREE.MeshLambertMaterial( { color: 0xCC0000 } );
+
+			// Create a sphere geometry
+			var sphereGeometry = new THREE.SphereGeometry(3, 6, 20);
+
+			var ball = new THREE.Mesh(sphereGeometry, sphereMaterial);
+
+			scene.add(ball);
+			
+			var ballDirX = 1, ballDirY = 1, ballSpeed = 2;
+			
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			
+			var canva = document.getElementById('gameCanvas');
+			canva.appendChild( renderer.domElement );
+			
+			
+			// Set the camera position
+			camera.position.z = 320;
+			
+			ball.position.z = 5;
+			// Create a point light
+			var light = new THREE.PointLight(0xffffff);
+			light.position.set(10, 25, 50);
+			scene.add(light);
+
+			// create the Plan geometry
+			// console.log("Creating the plan");
+			console.log ("Width: " + window.innerWidth + " Height: " + window.innerHeight);
+			var plan = new THREE.Mesh(
+				new THREE.PlaneGeometry(planWidth * 0.95, planHeight, planQuality, planQuality),
+				new THREE.MeshLambertMaterial({color: 0x00CC00})
+			);
+			scene.add(plan);
+			
+			// Creating paddles
+			paddle1.position.x = -(planWidth * 0.95) / 2;
+			paddle2.position.x = (planWidth * 0.95) / 2;
+			paddle1.position.z = paddleDepth;
+			paddle2.position.z = paddleDepth;
+			paddle1.position.y = 0;
+			paddle2.position.y = 0;
+			
+			scene.add(paddle1);
+			scene.add(paddle2);
+
+			// Function to handle key down events
+			function onKeyDown(event) {
+				event.preventDefault();
+				switch (event.code) {
+					case 'KeyW':
+						console.log('W key pressed');
+						// Move paddle up (alternative)
+						UpKey1 = true;
+						break;
+					case 'KeyS':
+						console.log('S key pressed');
+						// Move paddle down (alternative)
+						DownKey1 = true;
+						break;
+					case 'KeyA':
+						console.log('A key pressed1');
+						// Move paddle left
+						LeftKey1 = true;
+						break;
+					case 'KeyD':
+						console.log('D key pressed1');
+						// Move paddle right
+						RightKey1 = true;
+						break;
+				}
+			}
+
+			// Function to handle key up events
+			function onKeyUp(event) {
+				event.preventDefault();
+				console.log(`Key released: ${event.code}`); 
+				switch (event.code) {
+					case 'KeyW':
+						console.log('W key released');
+						UpKey1 = false;
+						break;
+					case 'KeyS':
+						console.log('S key released');
+						DownKey1 = false;
+						break;
+					case 'KeyA':
+						console.log('A key released');
+						LeftKey1 = false;
+						break;
+					case 'KeyD':
+						console.log('D key released');
+						RightKey1 = false;
+						break;
+				}
+			}
+
+			// Function to handle key press events
+			function updatePaddles() {
+				if (UpKey1) {
+					// Move paddle up (alternative)
+					if (Math.abs(paddle1.position.x) > Math.abs(planWidth * 0.95 / 2) / 3) {
+						paddle1.position.x += paddle1Dir;
+					}
+					//break;
+				}
+				if (DownKey1) {
+					// Move paddle down (alternative)
+					if (Math.abs(paddle1.position.x) < Math.abs(planWidth * 0.95 / 2)) {
+						paddle1.position.x -= paddle1Dir;
+					}
+					//break;
+				}
+				if (LeftKey1) {
+					// Move paddle left
+					if (paddle1.position.y < planHeight / 2) {
+						paddle1.position.y += paddle1Dir;
+					}
+
+					//break;
+				}
+				if (RightKey1) {
+					// Move paddle right
+					if (paddle1.position.y > -planHeight / 2) {
+						paddle1.position.y -= paddle1Dir;
+					}
+					//break;
+				}
+			}
+
+			function setup()
+			{
+
+				
+				// event listeners
+				
+				draw();
+			}
+
+			var opponentSpeed = 0.5;
+
+			function moveOpponentPaddle() {
+				// Move paddle2 (opponent) toward the ball, but at a limited speed
+				if (paddle2.position.y < ball.position.y - paddleHeight / 4) {
+					paddle2.position.y += opponentSpeed;
+				} else if (paddle2.position.y > ball.position.y + paddleHeight / 4) {
+					paddle2.position.y -= opponentSpeed;
+				}
+			}
+
+			// Handles paddle collision logic
+function paddlePhysics()
+{
+    // PLAYER PADDLE
+	if (ball.position.x <= paddle1.position.x + paddleWidth
+	&&  ball.position.x >= paddle1.position.x)
+	{
+		if (ball.position.y <= paddle1.position.y + paddleHeight/2
+		&&  ball.position.y >= paddle1.position.y - paddleHeight/2)
+		{
+			if (ballDirX < 0)
+			{
+			
+				ballDirX = -ballDirX;
+
+				ballDirY += (ball.position.y - paddle1.position.y) * 0.1;  // Add variation based on where it hits
+			
+			}
+		}
+	}
+
+	// OPPONENT PADDLE (AI)
+	if (ball.position.x <= paddle2.position.x + paddleWidth
+	&&  ball.position.x >= paddle2.position.x)
+	{
+		// and if ball is aligned with paddle2 on y plane
+		if (ball.position.y <= paddle2.position.y + paddleHeight/2
+		&&  ball.position.y >= paddle2.position.y - paddleHeight/2)
+		{
+			// and if ball is travelling towards opponent (+ve direction)
+			if (ballDirX > 0)
+			{
+				// switch direction of ball travel
+				ballDirX = -ballDirX;
+				ballDirY += (ball.position.y - paddle2.position.y) * 0.1;  // Add variation based on where it hits
+
+			}
+		}
+	}
+}
+
+// Reset the ball to the center and give it a new random direction
+function resetBall() {
+    ball.position.set(0, 0, ball.position.z);
+    ballDirX = Math.random() < 0.5 ? 1 : -1;  // Randomize direction
+    ballDirY = Math.random() < 0.5 ? 1 : -1;
+}
+			
+			
+			function draw()
+			{
+				renderer.render(scene, camera);
+				
+				// console.log ("pad1: " + paddle1.position.x + " pad2: " + paddle2.position.x);
+				// console.log ("camera: " + camera.position.x + " " + camera.position.z);
+				camera.position.x = paddle1.position.x - 100;
+				camera.position.z = paddle1.position.z + 100;
+				camera.rotation.y = -60 * Math.PI / 180;
+				camera.rotation.z = -90 * Math.PI / 180;
+				
+				// Move the Paddle
+				window.addEventListener('keydown', onKeyDown);
+				window.addEventListener('keyup', onKeyUp);
+				updatePaddles();
+
+				// Move the ball
+				ball.position.x += ballDirX * ballSpeed;
+				ball.position.y += ballDirY * ballSpeed;
+				if (ball.position.x > (planWidth) / 2 || ball.position.x < -(planWidth) / 2) {
+					ballDirX = -ballDirX;
+				}
+				if (ball.position.y > planHeight / 2 || ball.position.y < -(planHeight) / 2) {
+					ballDirY = -ballDirY;
+				}
+
+				// Ball out of bounds (when it goes past the paddles)
+				if (ball.position.x >= (planWidth) / 2) {
+					// Ball went out of bounds on the player's side, reset the ball
+					resetBall();
+				} else if (ball.position.x <= -(planWidth) / 2) {
+					// Ball went out of bounds on the opponent's side, reset the ball
+					resetBall();
+				}
+				paddlePhysics();
+				moveOpponentPaddle();
+				
+				
+
+				requestAnimationFrame(draw);
+			}
+		</script>
+		
+	</body>
+</html>

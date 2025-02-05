@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pong Masters - Choose Your Game Mode</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #4a0e4e, #81428e, #9d7fa6);
+            z-index: -1;
+        }
+
+        .pong-animation {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+        }
+
+        .paddle {
+            position: absolute;
+            width: 10px;
+            height: 100px;
+            background-color: rgba(255, 255, 255, 0.8);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .left { left: 20px; }
+        .right { right: 20px; }
+
+        .ball {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        h1 {
+            color: white;
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .game-modes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .game-mode {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .game-mode:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-mode h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .game-mode p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="background">
+        <div class="pong-animation">
+            <div class="paddle left" id="leftPaddle"></div>
+            <div class="ball" id="ball"></div>
+            <div class="paddle right" id="rightPaddle"></div>
+        </div>
+    </div>
+    <div class="container">
+        <h1>Pong Masters</h1>
+        <div class="game-modes" id="gameModes">
+            <!-- Game modes will be dynamically inserted here -->
+        </div>
+    </div>
+
+    
+
+    <script>
+        const gameModes = [
+            {
+                id: "local-ai",
+                title: "Play Against AI",
+                description: "Challenge our advanced AI in a local game",
+                url: "/LocalAi"
+            },
+            {
+                id: "local-friend",
+                title: "Local Multiplayer",
+                description: "Play with a friend on the same device",
+                url: "/localMultiplayer"
+            },
+            {
+                id: "online-friend",
+                title: "Online Friend Battle",
+                description: "Challenge a friend in an online match",
+                url: "/onlineMultiplayer"
+            },
+            {
+                id: "tournament",
+                title: "Tournament Mode",
+                description: "Compete in a bracket-style tournament",
+                url: "/tournament"
+            },
+            {
+                id: "multiplayer-lobby",
+                title: "Multiplayer Lobby",
+                description: "Join a lobby and play with others online",
+                url: "/localBot"
+            }
+        ];
+
+        function createGameModeElement(gameMode) {
+            const element = document.createElement('div');
+            element.classList.add('game-mode');
+            element.innerHTML = `
+                <h2>${gameMode.title}</h2>
+                <p>${gameMode.description}</p>
+            `;
+            element.addEventListener('click', () => {
+                // Redirect to the API endpoint
+                window.location.href = gameMode.url;
+            });
+            return element;
+        }
+
+        function populateGameModes() {
+            const gameModesContainer = document.getElementById('gameModes');
+            gameModes.forEach(gameMode => {
+                const gameModeElement = createGameModeElement(gameMode);
+                gameModesContainer.appendChild(gameModeElement);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateGameModes();
+            initPongAnimation();
+        });
+
+        function initPongAnimation() {
+            const ball = document.getElementById('ball');
+            const leftPaddle = document.getElementById('leftPaddle');
+            const rightPaddle = document.getElementById('rightPaddle');
+            const container = document.querySelector('.pong-animation');
+
+            let ballX = 50;
+            let ballY = 50;
+            let ballSpeedX = 0.3;
+            let ballSpeedY = 0.2;
+
+            let leftPaddleY = 50;
+            let rightPaddleY = 50;
+            const paddleSpeed = 0.3;
+
+            function updateAnimation() {
+                const containerRect = container.getBoundingClientRect();
+                const ballRect = ball.getBoundingClientRect();
+                const leftPaddleRect = leftPaddle.getBoundingClientRect();
+                const rightPaddleRect = rightPaddle.getBoundingClientRect();
+
+                // Update ball position
+                ballX += ballSpeedX;
+                ballY += ballSpeedY;
+
+                // Ball collision with top and bottom
+                if (ballY <= 0 || ballY >= 100) {
+                    ballSpeedY = -ballSpeedY;
+                }
+
+                // Ball collision with paddles
+                if (ballX <= 2 && ballY >= leftPaddleY - 5 && ballY <= leftPaddleY + 15) {
+                    ballSpeedX = -ballSpeedX;
+                }
+                if (ballX >= 98 && ballY >= rightPaddleY - 5 && ballY <= rightPaddleY + 15) {
+                    ballSpeedX = -ballSpeedX;
+                }
+
+                // Reset ball if it goes out of bounds
+                if (ballX <= 0 || ballX >= 100) {
+                    ballX = 50;
+                    ballY = 50;
+                    ballSpeedX = -ballSpeedX;
+                }
+
+                // Update paddle positions
+                const targetY = ballY - 5; // Aim for the middle of the paddle
+
+                // Left paddle AI
+                if (leftPaddleY < targetY) {
+                    leftPaddleY += paddleSpeed;
+                } else if (leftPaddleY > targetY) {
+                    leftPaddleY -= paddleSpeed;
+                }
+
+                // Right paddle AI (slightly less accurate)
+                const rightTargetY = ballY - 5 + (Math.random() - 0.5) * 10;
+                if (rightPaddleY < rightTargetY) {
+                    rightPaddleY += paddleSpeed * 0.8;
+                } else if (rightPaddleY > rightTargetY) {
+                    rightPaddleY -= paddleSpeed * 0.8;
+                }
+
+                // Clamp paddle positions
+                leftPaddleY = Math.max(0, Math.min(90, leftPaddleY));
+                rightPaddleY = Math.max(0, Math.min(90, rightPaddleY));
+
+                // Apply positions
+                ball.style.left = `${ballX}%`;
+                ball.style.top = `${ballY}%`;
+                leftPaddle.style.top = `${leftPaddleY}%`;
+                rightPaddle.style.top = `${rightPaddleY}%`;
+
+                requestAnimationFrame(updateAnimation);
+            }
+
+            updateAnimation();
+        }
+    </script>
+</body>
+</html>

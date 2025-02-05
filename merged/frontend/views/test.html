@@ -1,0 +1,56 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch User Data</title>
+    <script>
+        async function fetchUserData(accessToken) {
+            try {
+                const response = await fetch('http://localhost:8000/api/user_data/', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (response.ok) {
+                    const userData = await response.json();
+                    console.log('User data:', userData);
+                    // You can update the UI here with user data
+                    document.getElementById('userData').textContent = JSON.stringify(userData, null, 2);
+                } else if (response.status === 401) {
+                    console.error('Unauthorized: Invalid or expired token');
+                    document.getElementById('userData').textContent = 'Unauthorized: Invalid or expired token';
+                } else {
+                    console.error('Failed to fetch user data');
+                    document.getElementById('userData').textContent = 'Failed to fetch user data';
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+                document.getElementById('userData').textContent = 'Error fetching user data';
+            }
+        }
+
+        function handleFetchClick() {
+            const accessToken = document.getElementById('accessToken').value;
+            fetchUserData(accessToken);
+        }
+    </script>
+</head> -->
+<!-- <body> -->
+    <h1>Fetch User Data</h1>
+    <div>
+        <label for="accessToken">Access Token:</label>
+        <input type="text" id="accessToken" placeholder="Enter access token">
+    </div>
+    <div>
+        <button onclick="handleFetchClick()">Fetch User Data</button>
+    </div>
+    <pre id="userData" style="color: aliceblue;">User data will be displayed here...</pre>
+    <script>
+        
+    </script>
+<!-- </body>
+</html> -->

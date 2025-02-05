@@ -1,0 +1,255 @@
+@import url('https://fonts.cdnfonts.com/css/games');
+
+@font-face {
+    font-family: 'Jersey 15';
+    src: url('../fonts/jersey15.woff2') format('woff2'),
+         url('../fonts/jersey15.woff') format('woff'),
+         url('../fonts/jersey15.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+body {
+    background-color: transparent;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    height: auto;
+}
+
+#signup {
+    background-color: transparent;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+
+#presentation {
+    background: linear-gradient(116.82deg, #F338F7 0%, #5B54FA 52.5%);
+    width: 50vw;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    grid-column: 1;
+}
+
+#logo {
+    width: 242px;
+    height: 84px;
+    margin-top: 20px;
+    margin-left: 20px;
+    background-color: transparent;
+}
+
+#h1signup {
+    width: 950px;
+    height: 150px;
+    margin-top: 250px;
+    margin-left: 0px;
+    font-family: 'Jersey 15', 'Games', sans-serif;
+    font-size: 128px;
+    font-weight: 400px;
+    line-height: 128px;
+    text-align: center;
+    color: white;
+    /* display: inline-block; */
+}
+
+.signupform {
+    background-color: rgb(47, 10, 68);
+    height: 100%;
+    grid-column: 2;
+}
+
+.formule {
+    margin-left: 50px;
+    margin-top: 50px;
+    width: 90%;
+    height: 90%;
+    background-color: rgb(21, 2, 32);
+}
+
+.subject {
+    width: 358px;
+    height: 73px;
+    color: #ffffff;
+    font-size: 44px;
+    font-style: bold;
+    font-family: Inter;
+    text-align: center;
+    margin-left: 25%;
+    padding-top: 20px;
+    text-decoration: underline;
+    text-decoration-color: #c312d381;
+    text-decoration-thickness: 6px;
+    text-underline-offset: 15px;
+}
+
+.formulee {
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.input-container {
+    position: relative;
+    width: 60%;
+    margin-left: 150px;
+}
+
+.formulee input {
+    width: 100%;
+    height: 50px;
+    background-color: transparent;
+    padding: 10px 40px 10px 10px;
+    box-sizing: border-box;
+    border-radius: 20px;
+    color: #ffffff;
+    font-size: 15px;
+}
+
+.icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 24px;
+    width: 24px;
+}
+
+label {
+    color: #ffffff;
+    margin-left: 150px;
+    font-size: 20px;
+    font-family: 'Istok Web', sans-serif;
+    font-weight: bold;
+}
+
+#signupbtn {
+    width: 60%;
+    height: 50px;
+    background-color: #5B54FA;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    margin-left: 150px;
+    margin-top: 20px;
+    font-size: 20px;
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#signupbtn:hover {
+    background-color: #fa54d6;
+}
+
+#q {
+    width: 60%;
+    height: 50px;
+    background-color: #ffffff;
+    color: #8A929C;
+    border: none;
+    border-radius: 20px;
+    margin-left: 150px;
+    margin-top: 20px;
+    font-size: 20px;
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#q:hover {
+    background-color: #653aca;
+}
+
+h2 {
+    color: #d4caca;
+    margin-left: 150px;
+    font-size: 16px;
+    margin-bottom: -10px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+p {
+    color: #d4caca;
+    text-align: center;
+    font-size: 16px;
+    margin-top: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#login {
+    color: #ffffff;
+    font-weight: bold;
+    text-decoration: none;
+    border: none;
+    background-color: transparent;
+    margin-left: 5px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+#pong {
+    width: 100%;
+    height: 38.3%;
+    margin-left: 0;
+    margin-top: 0;
+}
+
+#darkmode-btn {
+    width: 2.5%;
+    height: 2.5%;
+    cursor: pointer;
+    margin-left: 97%;
+    background-color: transparent;
+    background-image: url('/images/darkmode.png');
+    background-size: cover;
+}
+
+#darkmode-btn:hover {
+    background-color: #fa54d6;
+}
+
+#input_color {
+    color: #ffffff;
+}
+
+.page-content {
+    display: none;
+}
+
+#signinform{
+    background-color: rgb(47, 10, 68);
+    height: 100%;
+    grid-column: 2;
+}
+
+#signupb{
+    color: #ffffff;
+    font-weight: bold;
+    text-decoration: none;
+    border: none;
+    background-color: transparent;
+    margin-left: 5px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+/* 
+@media (max-width: 1800px) {
+    #presentation {
+    overflow-x: auto;
+}
+}
+
+@media (max-width: 700px) {
+    .test{
+        margin-left: 0px;
+    }
+} */

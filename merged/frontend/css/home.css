@@ -1,0 +1,259 @@
+
+:root{
+    --background-color: #1D1F2E;
+    --background-color2: #141622;
+    --background-color3: rgba(0, 0, 0, 0.8);
+    --text-color:#ffffff;
+    --image: url('/images/darkmode.png');
+}
+[data-theme="light"]{
+    --background-color: #E2E2FC;
+    --background-color2: #EEF5FF;
+    --background-color3: rgba(255, 255, 255, 0.8);
+    --text-color:#000000;
+    --image: url('/images/lightmode.png');
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    height: auto; 
+    display: flex;
+    background-color: var(--background-color);
+}
+
+#home-navbar {
+    background-color: var(--background-color);
+}
+
+#sidebarMenu {
+    background-color: var(--background-color2);
+    height: 100vh;
+    /* width: 13vw; */
+    border-radius: 10px; 
+    /* display: block; */
+    overflow-y: auto;
+    position: fixed;
+}
+
+.navbar-custom {
+    margin-top: 15px;
+    background-color: #1D1F2E;
+    border-bottom: 2px solid #222455;
+}
+
+.navbar {
+    display: flex;
+    justify-content: center; /* This centers the items inside the navbar */
+    align-items: center; /* Ensures the items are vertically aligned */
+    background-color: transparent !important;
+}
+
+.logo-container {
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.logo-container::after {
+    content: '';
+    display: block;
+    width: 80%; 
+    height: 5px; 
+    background-color: rgb(98, 89, 89);
+    position: absolute; 
+    left: 8%;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#logo {
+    width: 250px;
+    height: 90px;
+    display: flex;
+}
+
+#menu {
+    margin-top: 50px;
+    margin-left: 2.5vw;
+    font-size: 22px;
+    font-weight: bold;
+    color: #5356FB;
+    font-family: 'Inter', sans-serif;
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 5px;
+}
+
+.sidebar-content {
+    /* display: block; */
+    font-size: 18px;
+    margin-left: 2vw;
+    text-decoration: none;
+    font-weight: bold;
+    font-family: 'Inter', sans-serif;
+    color: #A4B1CD;
+}
+.sidebar-content:hover {
+    color: #5356FB;
+    cursor: pointer;
+}
+
+li {
+    margin-top: 20px;
+}
+
+#settings {
+    margin-top: 400px;
+}
+
+#sett {
+    color: #5356FB;
+    font-size: 25px;
+    font-family: 'Inter', sans-serif;
+    margin-left: 60px;
+    margin-top: 20px;
+}
+
+#logout-btn {
+    background-color: #5356FB;
+    width: max-content;
+    border-radius: 50px;
+    margin-top: 30px;
+    margin-left: 2vw;
+}
+
+#navbar-2 {
+    background-color: var(--background-color);
+}
+
+.search-place {
+    position: relative;
+    width: 400px;
+}
+
+#search-input {
+    padding-left: 30px; /* Add padding to make space for the icon */
+    background-color: var(--background-color1);
+    border-radius: 50px;
+    border-color: #F338F7;
+    height: 60px;
+    width: 350px;
+    color: var(--text-color);
+}
+
+.search-place input::placeholder {
+    color: #A4B1CD;
+    font-size: 18px;
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+}
+
+.search-place .search-icon {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none; /* Prevent the icon from blocking input */
+}
+
+.side-ul {
+    margin-right: 100px;
+}
+
+.darkmode {
+    position: relative;
+    width: 200px;
+}
+
+.darkmode button {
+    margin-bottom: 15px;
+    width: 170px;
+    height: 50px;
+    padding-left: 30px; /* Add padding to make space for the icon */
+    background-color: #FFFFFF;
+    color: #364656;
+    border-radius: 20px;
+    border-color: #F338F7;
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+}
+
+.darkmode .dkmode-icon {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    left: 20px;
+    top: 38%;
+    /* background-color: #141622;
+    background-image: url(../images/lightmode.png); */
+    
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.notification-btn {
+    background: none;
+    border: none;
+    position: relative;
+}
+
+.notification-btn .icon-not {
+    width: 55px; /* Adjust icon size */
+    height: auto;
+    margin-top: -8px;
+    margin-right: 20px;
+}
+main{
+    background-color: #ffffff;
+}
+
+
+
+@media (max-width: 1200px) {
+    .sidebar {
+        display: none;
+    }
+    #sidebarMenu{
+        background-color: var(--background-color3);
+    }
+    .sidebar.show {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 250px;
+        height: 100vh;
+        z-index: 1;
+    }
+    #toggle-button {
+        background-color: #000000;
+        color: #141622;
+        width: 80px;
+        height: 50px;
+        border-radius: 20px;
+        border:none;
+    }
+    .nav-butt{
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+    }
+}
+
+@media (min-width: 1200px) {
+    #toggle-button {
+        display: none;
+    }
+}

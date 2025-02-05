@@ -1,0 +1,63 @@
+#settings-title {
+    font-size: 45px;
+    font-family: 'Baloo Da', sans-serif;
+    color: #ffffff;
+    margin-top: 20px;
+    margin-bottom: 50px;
+}
+.profile-update {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10vw;
+    margin-top: 15vh;
+}
+#avatar{
+    width: 80px;
+    height: 80px;
+    /* margin-left: 50px; */
+    margin-top: 10px;
+    border-radius: 50%;
+}
+label{
+    color:#ffffff;
+    font-size: 25px;
+    margin-right: 50px;
+    width: 200px;
+    font-family: 'Istok Bold', sans-serif;
+}
+input{
+    width: 30vw;
+    height: 50px;
+    font-size: 15px;
+    margin-bottom: 40px;
+    align-items: center;
+    justify-content: center;
+    background-color: #171820;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+    border-radius: 20px;
+}
+#photo-upd{
+    width: 20vw;
+    height: 60px;
+    font-size: 20px;
+    margin-left: 6vw;
+    margin-bottom: 40px;
+    align-items: center;
+    justify-content: center;
+    background-color: #a5a7b5;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+    border-radius: 20px;
+}
+#save-btn{
+    width: 25vw;
+    height: 70px;
+    font-size: 20px;
+    margin-left: 8vw;
+    margin-top: 40px;
+    background-color: #16a060;
+    color: #ffffff;
+    border-radius: 80px;
+}

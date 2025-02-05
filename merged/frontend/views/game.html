@@ -1,0 +1,331 @@
+
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.10.1"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stats.js@0.17.0/build/stats.min.js"></script>
+<!-- </head>
+<body> -->
+    <!-- {% load static %} -->
+    <div id="camera-controls">
+        <button id="reset">o</button>
+    </div>
+    <!-- Particle Background -->
+    <div id="particles-background"></div>
+
+    <button id="close-button">Back</button>
+
+    <!-- Mode Selection -->
+    <div id="mode-selection">
+        <button class="mode-button" id="localMultiplayerButton">Local Multiplayer</button>
+        <button class="mode-button" id="onlineMultiplayerButton">Online Multiplayer</button>
+        <button class="mode-button" id="aiButton" >AI Opponent</button>
+    </div>
+
+    <!-- Tournament Controls -->
+    <div id="tournament-controls">
+        <button class="tournament-button" id="startTournamentButton">Start Tournament</button>
+        <button class="tournament-button" id="joinTournamentButton">Join Tournament</button>
+        <button class="tournament-button" id="notifyWinnersButton">Notify Winners</button>
+        <button class="tournament-button" id="nextRoundButton">Start Next Round</button>
+    </div>
+
+    <!-- Chat Container -->
+    <div id="chat-container" class="minimized">
+        <div id="chat-header">
+            <span id="chat-title">Game Chat</span>
+            <button id="chat-minimize">-</button>
+        </div>
+        <div id="chat-content">
+            <select id="friend-select">
+                <option value="">Select a friend</option>
+                <option value="friend1">Friend 1</option>
+                <option value="friend2">Friend 2</option>
+                <option value="friend3">Friend 3</option>
+            </select>
+            <div id="chat-messages"></div>
+            <div id="chat-input">
+                <input type="text" id="chat-message-input" placeholder="Type a message...">
+                <button id="chat-send-button">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Container -->
+    <div id="game-container"><div id="countdown-overlay" class="countdown-overlay"></div></div>
+
+    <!-- Tournament Display -->
+    <div id="tournament-display">
+        <div class="tournament-header">
+            <h2 id="tournament-name"></h2>
+            <p id="tournament-status"></p>
+        </div>
+        
+        <div class="tournament-info">
+            <div class="players-section">
+                <h3>Players</h3>
+                <div id="players-list"></div>
+            </div>
+            <div class="tournament-stats">
+                <h3>Tournament Stats</h3>
+                <div id="tournament-stats-content"></div>
+            </div>
+        </div>
+        
+        <div class="bracket-section">
+            <h3>Tournament Bracket</h3>
+            <div id="bracket-display"></div>
+        </div>
+        
+        <div class="active-matches">
+            <h3>Active Matches</h3>
+            <div id="active-matches-list"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { Game, WebSocketManager } from "../game/js/setup2.js";
+
+        let currentWebSocket = null;
+        let currentGame = null;
+
+        console.log ("hello from here////")
+
+        async function checkAuthentication() {
+            // window.location.href = '/login/';
+            // return false;
+            try {
+                const response = await fetch('http://127.0.0.1/8000/api/user_data/');
+                const data = await response.json();
+                console.log("response = ", data);
+                
+                // if (!data.is_authenticated) {
+                //     // Redirect to login page if not authenticated
+                //     window.location.href = '/login/';
+                //     return false;
+                // }
+                return true;
+            } catch (error) {
+                console.error('Authentication check failed:', error);
+                // window.location.href = '/login/';
+                return false;
+            }
+        }
+
+        function cleanupPreviousMode() {
+            if (currentWebSocket) {
+                currentWebSocket.close();
+                currentWebSocket = null;
+            }
+
+            if (currentGame) {
+                currentGame.destroy();
+                currentGame = null;
+            }
+        }
+
+        function toggleButtons(playing) {
+            const modeButtons = document.getElementById('mode-selection');
+            const tournamentControls = document.getElementById('tournament-controls');
+            const closeButton = document.getElementById('close-button');
+
+            if (playing) {
+                modeButtons.style.display = 'none';
+                tournamentControls.style.display = 'none';
+                closeButton.style.display = 'block';
+            } else {
+                modeButtons.style.display = 'flex';
+                tournamentControls.style.display = 'flex';
+                closeButton.style.display = 'none';
+            }
+        }
+
+        function startGame(mode, online) {
+            console.log("Starting game: ", mode);
+            cleanupPreviousMode();
+
+            const gameContainer = document.getElementById('game-container');
+            const newCanvas = document.createElement('div');
+            newCanvas.id = 'gameCanvas';
+            gameContainer.appendChild(newCanvas);
+
+            const wsUrl = "ws://localhost:8000/ws/pong/";
+            currentGame = new Game();
+            currentGame.online = online;
+            currentWebSocket = new WebSocketManager(wsUrl, currentGame, mode);
+
+            currentGame.animate();
+
+            toggleButtons(true);
+            console.log("Game started");
+        }
+
+        async function startTournament() {
+            console.log("Starting tournament...");
+            startGame('create_tournament', true);
+        }
+
+        async function joinTournament() {
+            console.log("Joining tournament...");
+            startGame('join_tournament', true);
+        }
+
+        async function notifyWinners() {
+            console.log("Notifying winners...");
+            startGame("list_tournaments", true);
+        }
+
+        async function startNextRound() {
+            console.log("Starting next round...");
+            startGame("tournament_match_complete", true);
+        }
+
+        document.addEventListener('DOMContentLoaded',  async function() {
+            await checkAuthentication();
+
+            document.getElementById('localMultiplayerButton').addEventListener('click', function() {
+                startGame('LocalMultiplayerOpenent', false);
+            });
+
+            document.getElementById('onlineMultiplayerButton').addEventListener('click', function() {
+                startGame('OnlineMultiplayerOpenent', true);
+            });
+
+            document.getElementById('aiButton').addEventListener('click', function() {
+                startGame('AiOpenent', false);
+            });
+
+            document.getElementById('close-button').addEventListener('click', function () {
+                cleanupPreviousMode();
+                toggleButtons(false);
+                console.log("Game closed");
+            });
+
+            document.getElementById('startTournamentButton').addEventListener('click', startTournament);
+            document.getElementById('joinTournamentButton').addEventListener('click', joinTournament);
+            document.getElementById('notifyWinnersButton').addEventListener('click', notifyWinners);
+            document.getElementById('nextRoundButton').addEventListener('click', startNextRound);
+        });
+
+        const cameraControls = document.getElementById("camera-controls");
+        let isDragging = false;
+        let offsetX, offsetY;
+    
+        cameraControls.addEventListener("mousedown", (e) => {
+            isDragging = true;
+            offsetX = e.clientX - cameraControls.getBoundingClientRect().left;
+            offsetY = e.clientY - cameraControls.getBoundingClientRect().top;
+        });
+    
+        document.addEventListener("mousemove", (e) => {
+            if (isDragging) {
+                cameraControls.style.left = `${e.clientX - offsetX}px`;
+                cameraControls.style.top = `${e.clientY - offsetY}px`;
+            }
+        });
+    
+        document.addEventListener("mouseup", () => {
+            isDragging = false;
+        });
+
+        // Initialize particle background
+        tsParticles.load("particles-background", {
+            particles: {
+                number: {
+                    value: 100,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: "#ffffff"
+                },
+                shape: {
+                    type: "circle"
+                },
+                opacity: {
+                    value: 0.5,
+                    random: true
+                },
+                size: {
+                    value: 3,
+                    random: true
+                },
+                move: {
+                    enable: true,
+                    speed: 0.5,
+                    direction: "none",
+                    random: true,
+                    straight: false,
+                    out_mode: "out"
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: "repulse"
+                    }
+                }
+            }
+        });
+
+        // Chat functionality
+        const chatContainer = document.getElementById('chat-container');
+        const chatHeader = document.getElementById('chat-header');
+        const chatMinimize = document.getElementById('chat-minimize');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-message-input');
+        const chatSendButton = document.getElementById('chat-send-button');
+        const friendSelect = document.getElementById('friend-select');
+
+        let isMinimized = true;
+
+        function toggleChat() {
+            isMinimized = !isMinimized;
+            chatContainer.classList.toggle('minimized', isMinimized);
+            chatContainer.classList.toggle('expanded', !isMinimized);
+            chatMinimize.textContent = isMinimized ? '+' : '-';
+        }
+
+        function addChatMessage(message, isSent = false) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message');
+            messageElement.classList.add(isSent ? 'sent' : 'received');
+            messageElement.textContent = message;
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function sendChatMessage() {
+            const message = chatInput.value.trim();
+            const selectedFriend = friendSelect.value;
+            if (message && selectedFriend) {
+                addChatMessage(`To ${selectedFriend}: ${message}`, true);
+                chatInput.value = '';
+                // Here you would typically send the message to the server
+                // For this example, we'll simulate receiving a response after a short delay
+                setTimeout(() => {
+                    addChatMessage(`${selectedFriend}: Message received!`, false);
+                }, 1000);
+            } else if (!selectedFriend) {
+                alert('Please select a friend to send the message to.');
+            }
+        }
+
+        chatHeader.addEventListener('click', toggleChat);
+        chatSendButton.addEventListener('click', sendChatMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        });
+
+        // Simulate chat initialization after a few seconds
+        setTimeout(() => {
+            toggleChat(); // Expand the chat
+            addChatMessage("Welcome to the game chat!", false);
+        }, 3000);
+    </script>
+<!-- </body>
+</html> -->

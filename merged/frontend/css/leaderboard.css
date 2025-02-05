@@ -1,0 +1,81 @@
+:root{
+    --background-color: #1D1F2E;
+    --background-color2: #141622;
+    --text-color:#ffffff;
+    --image: url('/images/darkmode.png');
+}
+[data-theme="light"]{
+    --background-color: #f5e0fff1;
+    --background-color2: #E3E3FD;
+    --text-color:#000000;
+    --image: url('/images/lightmode.png');
+}
+
+
+.title-container{
+    margin-top: 20px;
+    width: fit-content;
+    display: flex;
+}
+#leaderboard-title{
+    color: #FFFFFF;
+    font-family: 'Baloo Da', sans-serif;
+    font-weight: bold;
+}
+
+.top-3{
+    margin-top:200px;
+    position: relative;
+    display: flex;
+    justify-content:center
+}
+
+#first{
+    margin-top: -150px;
+    width:350px;
+    height:450px;
+    background-color: #FEE369;
+    border-radius: 20px;
+}
+#second{
+    width:350px;
+    height: 300px;
+    background-color: #FAB078;
+    border-radius: 20px;
+}
+#third{
+    width:350px;
+    height: 300px;
+    background-color: #F2CA7E;
+    border-radius: 20px;
+}
+
+.board{
+    margin-left: 150px;
+    margin-right: 150px;
+}
+/* .board-head{
+
+} */
+ .custom-table thead{
+    height: 50px;
+ }
+.custom-table th{
+    background-color: #404147;
+    color: #FFFFFF;
+}
+#rank{
+    width: 100px;
+}
+#rate-col{
+    color: #00A6ED;
+}
+#win-col{
+    color: #14CD74;
+}
+#lose-col{
+    color: #F94A63;
+}
+#score-col{
+    color: #5253E6;
+}

@@ -1,0 +1,668 @@
+<!doctype html>
+<html>
+<head>
+    <title>Galactic Game Modes</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            background-color: #000033;
+            color: #00ffff;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        #mode-selection {
+            position: absolute;
+            top: 20px;
+            z-index: 10;
+            display: flex;
+            gap: 15px;
+        }
+
+        .mode-button {
+            background-color: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            padding: 10px 20px;
+            border: 2px solid #00ffff;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .mode-button:hover {
+            background-color: rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 10px #00ffff;
+        }
+
+        #tournament-controls {
+            position: absolute;
+            top: 100px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tournament-button {
+            background-color: rgba(255, 0, 255, 0.1);
+            color: #ff00ff;
+            padding: 10px 20px;
+            border: 2px solid #ff00ff;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tournament-button:hover {
+            background-color: rgba(255, 0, 255, 0.3);
+            box-shadow: 0 0 10px #ff00ff;
+        }
+
+        #close-button {
+            display: none;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            background-color: rgba(255, 0, 0, 0.6);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+        }
+
+        #close-button:hover {
+            background-color: rgba(255, 0, 0, 0.8);
+            box-shadow: 0 0 10px #ff0000;
+        }
+
+        #game-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+        }
+
+        #gameCanvas {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+
+        #camera-controls {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            background: rgba(0, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+            cursor: move;
+            user-select: none;
+            transition: transform 0.2s ease;
+            z-index: 10;
+        }
+    
+        #camera-controls:hover {
+            transform: scale(1.05);
+            background: rgba(0, 255, 255, 0.2);
+        }
+    
+        #camera-controls button {
+            position: absolute;
+            background: none;
+            border: none;
+            color: #00ffff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+    
+        #camera-controls button:hover {
+            color: #ffdf00;
+            transform: scale(1.2);
+            text-shadow: 0 0 5px #ffdf00;
+        }
+
+        .countdown-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 51, 0.8);
+            color: #00ffff;
+            font-size: 72px;
+            font-weight: bold;
+            z-index: 1000;
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        #tournament-display {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 51, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 100;
+            color: #00ffff;
+            max-width: 800px;
+            width: 90%;
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        .tournament-header {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .tournament-header h2 {
+            margin: 0;
+            color: #00ffff;
+            text-shadow: 0 0 5px #00ffff;
+        }
+
+        .tournament-header p {
+            margin: 5px 0;
+            color: #aaaaff;
+        }
+
+        .tournament-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .tournament-info h3 {
+            color: #ff00ff;
+            text-shadow: 0 0 5px #ff00ff;
+        }
+
+        .tournament-info div {
+            background: rgba(0, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #00ffff;
+        }
+
+        #particles-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Chat styles */
+        #chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            background-color: rgba(0, 0, 51, 0.9);
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            overflow: hidden;
+            z-index: 1000;
+            font-family: 'Orbitron', sans-serif;
+            transition: height 0.3s ease-in-out;
+        }
+
+        #chat-container.minimized {
+            height: 40px;
+        }
+
+        #chat-container.expanded {
+            height: 400px;
+        }
+
+        #chat-header {
+            background-color: rgba(0, 255, 255, 0.2);
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        #chat-title {
+            color: #00ffff;
+            font-weight: bold;
+        }
+
+        #chat-minimize {
+            background: none;
+            border: none;
+            color: #00ffff;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        #chat-content {
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 40px);
+        }
+
+        #friend-select {
+            background-color: rgba(0, 255, 255, 0.1);
+            border: none;
+            color: #00ffff;
+            padding: 5px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        #chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .chat-message {
+            margin-bottom: 10px;
+            padding: 5px 10px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+
+        .chat-message.received {
+            background-color: rgba(0, 255, 255, 0.1);
+            align-self: flex-start;
+        }
+
+        .chat-message.sent {
+            background-color: rgba(255, 0, 255, 0.1);
+            align-self: flex-end;
+            margin-left: auto;
+        }
+
+        #chat-input {
+            display: flex;
+            padding: 10px;
+        }
+
+        #chat-input input {
+            flex-grow: 1;
+            background-color: rgba(0, 255, 255, 0.1);
+            border: 1px solid #00ffff;
+            border-radius: 5px;
+            color: #00ffff;
+            padding: 5px;
+            margin-right: 5px;
+        }
+
+        #chat-input button {
+            background-color: rgba(0, 255, 255, 0.2);
+            border: 1px solid #00ffff;
+            border-radius: 5px;
+            color: #00ffff;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.10.1"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stats.js@0.17.0/build/stats.min.js"></script>
+</head>
+<body>
+    {% load static %}
+    <div id="camera-controls">
+        <button id="reset">o</button>
+    </div>
+    <!-- Particle Background -->
+    <div id="particles-background"></div>
+
+    <button id="close-button">Back</button>
+
+    <!-- Mode Selection -->
+    <div id="mode-selection">
+        <button class="mode-button" id="localMultiplayerButton">Local Multiplayer</button>
+        <button class="mode-button" id="onlineMultiplayerButton">Online Multiplayer</button>
+        <button class="mode-button" id="aiButton" >AI Opponent</button>
+    </div>
+
+    <!-- Tournament Controls -->
+    <div id="tournament-controls">
+        <button class="tournament-button" id="startTournamentButton">Start Tournament</button>
+        <button class="tournament-button" id="joinTournamentButton">Join Tournament</button>
+        <button class="tournament-button" id="notifyWinnersButton">Notify Winners</button>
+        <button class="tournament-button" id="nextRoundButton">Start Next Round</button>
+    </div>
+
+    <!-- Chat Container -->
+    <div id="chat-container" class="minimized">
+        <div id="chat-header">
+            <span id="chat-title">Game Chat</span>
+            <button id="chat-minimize">-</button>
+        </div>
+        <div id="chat-content">
+            <select id="friend-select">
+                <option value="">Select a friend</option>
+                <option value="friend1">Friend 1</option>
+                <option value="friend2">Friend 2</option>
+                <option value="friend3">Friend 3</option>
+            </select>
+            <div id="chat-messages"></div>
+            <div id="chat-input">
+                <input type="text" id="chat-message-input" placeholder="Type a message...">
+                <button id="chat-send-button">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Container -->
+    <div id="game-container"><div id="countdown-overlay" class="countdown-overlay"></div></div>
+
+    <!-- Tournament Display -->
+    <div id="tournament-display">
+        <div class="tournament-header">
+            <h2 id="tournament-name"></h2>
+            <p id="tournament-status"></p>
+        </div>
+        
+        <div class="tournament-info">
+            <div class="players-section">
+                <h3>Players</h3>
+                <div id="players-list"></div>
+            </div>
+            <div class="tournament-stats">
+                <h3>Tournament Stats</h3>
+                <div id="tournament-stats-content"></div>
+            </div>
+        </div>
+        
+        <div class="bracket-section">
+            <h3>Tournament Bracket</h3>
+            <div id="bracket-display"></div>
+        </div>
+        
+        <div class="active-matches">
+            <h3>Active Matches</h3>
+            <div id="active-matches-list"></div>
+        </div>
+    </div>
+
+    <script>
+        window.DJANGO_STATIC_URL = "{% static '' %}";
+    </script>
+    <script type="module">
+        import { Game, WebSocketManager } from "{% static 'js/setup2.js' %}";
+
+        let currentWebSocket = null;
+        let currentGame = null;
+
+        async function checkAuthentication() {
+            // window.location.href = '/login/';
+            // return false;
+            try {
+                const response = await fetch('http://127.0.0.1/8000/api/user_data/');
+                const data = await response.json();
+                console.log("response = ", data);
+                
+                // if (!data.is_authenticated) {
+                //     // Redirect to login page if not authenticated
+                //     window.location.href = '/login/';
+                //     return false;
+                // }
+                return true;
+            } catch (error) {
+                console.error('Authentication check failed:', error);
+                // window.location.href = '/login/';
+                return false;
+            }
+        }
+
+        function cleanupPreviousMode() {
+            if (currentWebSocket) {
+                currentWebSocket.close();
+                currentWebSocket = null;
+            }
+
+            if (currentGame) {
+                currentGame.destroy();
+                currentGame = null;
+            }
+        }
+
+        function toggleButtons(playing) {
+            const modeButtons = document.getElementById('mode-selection');
+            const tournamentControls = document.getElementById('tournament-controls');
+            const closeButton = document.getElementById('close-button');
+
+            if (playing) {
+                modeButtons.style.display = 'none';
+                tournamentControls.style.display = 'none';
+                closeButton.style.display = 'block';
+            } else {
+                modeButtons.style.display = 'flex';
+                tournamentControls.style.display = 'flex';
+                closeButton.style.display = 'none';
+            }
+        }
+
+        function startGame(mode, online) {
+            console.log("Starting game: ", mode);
+            cleanupPreviousMode();
+
+            const gameContainer = document.getElementById('game-container');
+            const newCanvas = document.createElement('div');
+            newCanvas.id = 'gameCanvas';
+            gameContainer.appendChild(newCanvas);
+
+            const wsUrl = "ws://localhost:8000/ws/pong/";
+            currentGame = new Game();
+            currentGame.online = online;
+            currentWebSocket = new WebSocketManager(wsUrl, currentGame, mode);
+
+            currentGame.animate();
+
+            toggleButtons(true);
+            console.log("Game started");
+        }
+
+        async function startTournament() {
+            console.log("Starting tournament...");
+            startGame('create_tournament', true);
+        }
+
+        async function joinTournament() {
+            console.log("Joining tournament...");
+            startGame('join_tournament', true);
+        }
+
+        async function notifyWinners() {
+            console.log("Notifying winners...");
+            startGame("list_tournaments", true);
+        }
+
+        async function startNextRound() {
+            console.log("Starting next round...");
+            startGame("tournament_match_complete", true);
+        }
+
+        document.addEventListener('DOMContentLoaded',  async function() {
+            await checkAuthentication();
+
+            document.getElementById('localMultiplayerButton').addEventListener('click', function() {
+                startGame('LocalMultiplayerOpenent', false);
+            });
+
+            document.getElementById('onlineMultiplayerButton').addEventListener('click', function() {
+                startGame('OnlineMultiplayerOpenent', true);
+            });
+
+            document.getElementById('aiButton').addEventListener('click', function() {
+                startGame('AiOpenent', false);
+            });
+
+            document.getElementById('close-button').addEventListener('click', function () {
+                cleanupPreviousMode();
+                toggleButtons(false);
+                console.log("Game closed");
+            });
+
+            document.getElementById('startTournamentButton').addEventListener('click', startTournament);
+            document.getElementById('joinTournamentButton').addEventListener('click', joinTournament);
+            document.getElementById('notifyWinnersButton').addEventListener('click', notifyWinners);
+            document.getElementById('nextRoundButton').addEventListener('click', startNextRound);
+        });
+
+        const cameraControls = document.getElementById("camera-controls");
+        let isDragging = false;
+        let offsetX, offsetY;
+    
+        cameraControls.addEventListener("mousedown", (e) => {
+            isDragging = true;
+            offsetX = e.clientX - cameraControls.getBoundingClientRect().left;
+            offsetY = e.clientY - cameraControls.getBoundingClientRect().top;
+        });
+    
+        document.addEventListener("mousemove", (e) => {
+            if (isDragging) {
+                cameraControls.style.left = `${e.clientX - offsetX}px`;
+                cameraControls.style.top = `${e.clientY - offsetY}px`;
+            }
+        });
+    
+        document.addEventListener("mouseup", () => {
+            isDragging = false;
+        });
+
+        // Initialize particle background
+        tsParticles.load("particles-background", {
+            particles: {
+                number: {
+                    value: 100,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: "#ffffff"
+                },
+                shape: {
+                    type: "circle"
+                },
+                opacity: {
+                    value: 0.5,
+                    random: true
+                },
+                size: {
+                    value: 3,
+                    random: true
+                },
+                move: {
+                    enable: true,
+                    speed: 0.5,
+                    direction: "none",
+                    random: true,
+                    straight: false,
+                    out_mode: "out"
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: "repulse"
+                    }
+                }
+            }
+        });
+
+        // Chat functionality
+        const chatContainer = document.getElementById('chat-container');
+        const chatHeader = document.getElementById('chat-header');
+        const chatMinimize = document.getElementById('chat-minimize');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-message-input');
+        const chatSendButton = document.getElementById('chat-send-button');
+        const friendSelect = document.getElementById('friend-select');
+
+        let isMinimized = true;
+
+        function toggleChat() {
+            isMinimized = !isMinimized;
+            chatContainer.classList.toggle('minimized', isMinimized);
+            chatContainer.classList.toggle('expanded', !isMinimized);
+            chatMinimize.textContent = isMinimized ? '+' : '-';
+        }
+
+        function addChatMessage(message, isSent = false) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message');
+            messageElement.classList.add(isSent ? 'sent' : 'received');
+            messageElement.textContent = message;
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function sendChatMessage() {
+            const message = chatInput.value.trim();
+            const selectedFriend = friendSelect.value;
+            if (message && selectedFriend) {
+                addChatMessage(`To ${selectedFriend}: ${message}`, true);
+                chatInput.value = '';
+                // Here you would typically send the message to the server
+                // For this example, we'll simulate receiving a response after a short delay
+                setTimeout(() => {
+                    addChatMessage(`${selectedFriend}: Message received!`, false);
+                }, 1000);
+            } else if (!selectedFriend) {
+                alert('Please select a friend to send the message to.');
+            }
+        }
+
+        chatHeader.addEventListener('click', toggleChat);
+        chatSendButton.addEventListener('click', sendChatMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        });
+
+        // Simulate chat initialization after a few seconds
+        setTimeout(() => {
+            toggleChat(); // Expand the chat
+            addChatMessage("Welcome to the game chat!", false);
+        }, 3000);
+    </script>
+</body>
+</html>
